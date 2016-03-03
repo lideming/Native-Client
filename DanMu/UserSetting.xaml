@@ -1,0 +1,87 @@
+﻿<Window x:Class="DanMu.UserSetting"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DanMu"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="用户设置" Height="400" Width="600"
+        Loaded="Window_Loaded">
+    <Window.Resources>
+        <ObjectDataProvider MethodName="GetType" 
+                        ObjectType="{x:Type sys:Type}" x:Key="colorsTypeOdp">
+            <ObjectDataProvider.MethodParameters>
+                <sys:String>System.Windows.Media.Colors, PresentationCore,
+            Version=3.0.0.0, Culture=neutral, 
+            PublicKeyToken=31bf3856ad364e35</sys:String>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider ObjectInstance="{StaticResource colorsTypeOdp}"  
+                        MethodName="GetProperties" x:Key="colorPropertiesOdp">
+        </ObjectDataProvider>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox x:Name="groupBoxFontSetting" Header="字体设置" Margin="10">
+            <Canvas Grid.Column="0">
+                <ComboBox x:Name="comboBoxFontFamily" 
+                      HorizontalAlignment="Left" VerticalAlignment="Top" 
+                      Canvas.Left="88" Canvas.Top="14" Width="120">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel></VirtualizingStackPanel>
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+                <Label x:Name="labelFontFamily" Content="字体样式" 
+                       Canvas.Left="10" Canvas.Top="10" 
+                       FontSize="12" Width="60"/>
+                <ComboBox x:Name="comboBoxFontColor" 
+                          Canvas.Left="88" Canvas.Top="56" Width="120" 
+                          HorizontalContentAlignment="Stretch" 
+                          ItemsSource="{Binding Source={StaticResource colorPropertiesOdp}}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Fill="{Binding Name}" Margin="1 3" Height="10" Width="20"></Rectangle>
+                                <TextBlock Text="{Binding Name}" Margin="2 0"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Label x:Name="labelFontColor" Content="字体颜色" 
+                       Canvas.Left="10" Canvas.Top="54" 
+                       FontSize="12" Width="60"/>
+                <ComboBox x:Name="comboBoxFontSize"
+                          HorizontalAlignment="Left" VerticalAlignment="Top" 
+                          Width="120" Canvas.Left="88" Canvas.Top="103"
+                          FontSize="12" ToolTip="字体大小"/>
+                <Label x:Name="labelFontSize" Content="字体大小" 
+                       Canvas.Left="10" Canvas.Top="101"
+                       FontSize="12" Width="60" ToolTip="字体大小"/>
+                <CheckBox x:Name="checkBoxFontWeight" Content="粗体" Canvas.Left="14" Canvas.Top="156"/>
+                <CheckBox x:Name="checkBoxFontStyle" Content="斜体" Canvas.Left="88" Canvas.Top="156"/>
+            </Canvas>
+        </GroupBox>
+        <GroupBox Grid.Column="1" x:Name="groupBoxOtherSetting" Header="程序设置" 
+                  Margin="10"/>
+        <Grid Grid.Column="1" Grid.Row="1" Height="30" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="buttonOk" Content="确定" Margin="20 5"></Button>
+            <Button x:Name="buttonCancel" Content="取消" 
+                    Grid.Column="1" Margin="20 5"
+                    Click="buttonCancel_Click"/>
+        </Grid>
+    </Grid>
+</Window>
