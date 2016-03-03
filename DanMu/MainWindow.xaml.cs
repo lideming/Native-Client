@@ -14,6 +14,8 @@ using System.Windows.Threading;
 using System.Security.Cryptography;
 using System.IO;
 using System.Data.SQLite;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DanMu
 {
@@ -23,6 +25,7 @@ namespace DanMu
     public partial class MainWindow : Window
     {
         private static int NUM = setting.getNUM(); //在开始时获取设定的弹幕数量，重新设置弹幕数量需要重启方可生效
+        private static bool BOOLDISPLAYTIP = false;
         Boolean [] isExist = new Boolean[NUM]; //栈模式，栈的对应空间是否有弹幕
         Boolean isStop = false;
         int time = setting.getDURATION() -1; //时间片，用于计算弹幕获取间隔，起始时间设置为间隔-1，方便一运行就出弹幕
@@ -35,6 +38,17 @@ namespace DanMu
         private delegate void DispatcherDelegateFetchWebContent(int num);
 
         private System.Windows.Forms.NotifyIcon notifyIcon;
+
+        class fetchedDanmu
+        {
+            public int num;
+            public List<string> contentList;
+
+            public fetchedDanmu(int num, List<string> contentList) {
+                this.num = num;
+                this.contentList = contentList;
+            }
+        }
 
         public MainWindow() {
 
@@ -127,9 +141,21 @@ namespace DanMu
             if (isExist[currentFetchNum] != true) {
                 //建立一个新的文字块，然后从网上获取信息，设置好文字块的属性，加入到Grid中
                 string textFetched = GetWebContent(setting.getSOURCE());
+                JObject parseResult = JObject.Parse(textFetched);
+                dynamic dy1 = parseResult as dynamic;
+                int num = (int)dy1["seqNum"];
+                List<string> contentList = new List<string>();
+                JArray dataArray = ((JArray)dy1["seqData"]);
+                if (dataArray != null) {
+                    JToken data = dataArray.First;
+                    while (data != null) {
+                        contentList.Add(data.ToString());
+                        data = data.Next;
+                    }
+                }
+                fetchedDanmu result = new fetchedDanmu(num,contentList);
                 Debug.WriteLine("DoWork "+currentFetchNum.ToString()+textFetched);
-                e.Result = textFetched;
-                Thread.Sleep(1000);
+                e.Result = result;
                 backgroundWorker.ReportProgress(100);
             }
         }
@@ -141,18 +167,22 @@ namespace DanMu
         private void FetchBW_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
             string textFetched;
             if (e.Cancelled == false && e.Error == null) {
-                 textFetched = e.Result as string;
+                fetchedDanmu result = e.Result as fetchedDanmu;
+                if (result.contentList.Count > 0) { 
+                    textFetched = result.contentList[0];
+                    Debug.WriteLine("Complete " + currentFetchNum.ToString() + textFetched);
+                    TextBlock text1 = grid.FindName("newText" + currentFetchNum.ToString()) as TextBlock;
+                    text1.Text = textFetched;
+                    Random ran = new Random();
+                    int RandKey = ran.Next(0, 500);
+                    text1.Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
+                    isExist[currentFetchNum] = true;
+                }
             }
             else {
                 textFetched = "获取时出现错误";
             }
-            Debug.WriteLine("Complete " + currentFetchNum.ToString() + textFetched);
-            TextBlock text1 = grid.FindName("newText" + currentFetchNum.ToString()) as TextBlock;
-            text1.Text = textFetched;
-            Random ran = new Random();
-            int RandKey = ran.Next(0, 500);
-            text1.Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
-            isExist[currentFetchNum] = true;
+            //写两个函数 一个取数据 一个更新界面
         }
 
         private void UpdateText(int num) {
@@ -333,8 +363,11 @@ namespace DanMu
             if(e.Button == System.Windows.Forms.MouseButtons.Left) {
                 if(this.Visibility == Visibility.Visible) {
                     this.Visibility = Visibility.Hidden;
-                    notifyIcon.BalloonTipText = "程序正在运行。";
-                    notifyIcon.ShowBalloonTip(2000);
+                    if (BOOLDISPLAYTIP == false) {
+                        notifyIcon.BalloonTipText = "程序已最小化至系统托盘。";
+                        notifyIcon.ShowBalloonTip(2000);
+                        BOOLDISPLAYTIP = true;
+                    }
                 }
                 else {
                     this.Visibility = Visibility.Visible;
