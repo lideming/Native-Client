@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Threading;
 using System.Security.Cryptography;
 using System.IO;
-using System.Data.SQLite;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace DanMu
@@ -25,12 +20,13 @@ namespace DanMu
     public partial class MainWindow : Window
     {
         private static int NUM = setting.getNUM(); //在开始时获取设定的弹幕数量，重新设置弹幕数量需要重启方可生效
+        private static List<string> danmuStorage = new List<string>();
         private static bool BOOLDISPLAYTIP = false;
         Boolean [] isExist = new Boolean[NUM]; //栈模式，栈的对应空间是否有弹幕
         Boolean isStop = false;
         int time = setting.getDURATION() -1; //时间片，用于计算弹幕获取间隔，起始时间设置为间隔-1，方便一运行就出弹幕
         private System.Timers.Timer mainTimer = null; //计时器
-        private int currentFetchNum = 0; //目前正在获取的弹幕的序号
+        private Timer getWebContentTimer = null;
 
         private BackgroundWorker fetchBW = new BackgroundWorker();
 
@@ -85,10 +81,17 @@ namespace DanMu
             }
             
             //开始计时
-            mainTimer = new System.Timers.Timer(1000);//这个1000是计时器的计时区间
+            mainTimer = new System.Timers.Timer();//这个1000是计时器的计时区间
             mainTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             mainTimer.Interval = 10; //计时间隔
             mainTimer.Enabled = true;
+
+            getWebContentTimer = new Timer();
+            getWebContentTimer.Elapsed += new ElapsedEventHandler(getWebContentTimeOut);
+            getWebContentTimer.Interval = 2000;
+            getWebContentTimer.Enabled = true;
+            getWebContentTimer.AutoReset = false;
+
             mainTimer.Start();
         }
 
@@ -125,10 +128,7 @@ namespace DanMu
                 }//if
                 else {
                     if (isTime == true) {
-                        if (fetchBW.IsBusy == false) {
-                            fetchBW.RunWorkerAsync(i);
-                        }
-                        //this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new DispatcherDelegateFetchWebContent(this.updateText), i);
+                        UpdateText(i);
                         isTime = false;//每一个获取周期仅获取一次
                     }//if
                 }//else
@@ -137,14 +137,20 @@ namespace DanMu
 
         private void FetchBW_DoWork(Object sender, DoWorkEventArgs e) {
             BackgroundWorker backgroundWorker = sender as BackgroundWorker;
-            currentFetchNum = (int)e.Argument;
-            if (isExist[currentFetchNum] != true) {
-                //建立一个新的文字块，然后从网上获取信息，设置好文字块的属性，加入到Grid中
-                string textFetched = GetWebContent(setting.getSOURCE());
+            //currentFetchNum = (int)e.Argument;
+            //if (isExist[currentFetchNum] != true) {
+            //建立一个新的文字块，然后从网上获取信息，设置好文字块的属性，加入到Grid中
+            string textFetched = GetWebContent(setting.getSOURCE());
+            int num;
+            List<string> contentList = new List<string>();
+            if (textFetched == "网络未连接。") {
+                num = 1;
+                contentList.Add(textFetched);
+            }
+            else {
                 JObject parseResult = JObject.Parse(textFetched);
                 dynamic dy1 = parseResult as dynamic;
-                int num = (int)dy1["seqNum"];
-                List<string> contentList = new List<string>();
+                num = (int)dy1["seqNum"];
                 JArray dataArray = ((JArray)dy1["seqData"]);
                 if (dataArray != null) {
                     JToken data = dataArray.First;
@@ -153,11 +159,12 @@ namespace DanMu
                         data = data.Next;
                     }
                 }
-                fetchedDanmu result = new fetchedDanmu(num,contentList);
-                Debug.WriteLine("DoWork "+currentFetchNum.ToString()+textFetched);
-                e.Result = result;
-                backgroundWorker.ReportProgress(100);
             }
+            fetchedDanmu result = new fetchedDanmu(num, contentList);
+            Debug.WriteLine("Get " + contentList.Count.ToString() + " Results.");
+            e.Result = result;
+            backgroundWorker.ReportProgress(100);
+            //}
         }
 
         private void FetchBW_ProgressChanged(object sender, ProgressChangedEventArgs e) {
@@ -165,40 +172,48 @@ namespace DanMu
         }
 
         private void FetchBW_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-            string textFetched;
+            //string textFetched;
             if (e.Cancelled == false && e.Error == null) {
                 fetchedDanmu result = e.Result as fetchedDanmu;
-                if (result.contentList.Count > 0) { 
-                    textFetched = result.contentList[0];
-                    Debug.WriteLine("Complete " + currentFetchNum.ToString() + textFetched);
-                    TextBlock text1 = grid.FindName("newText" + currentFetchNum.ToString()) as TextBlock;
-                    text1.Text = textFetched;
-                    Random ran = new Random();
-                    int RandKey = ran.Next(0, 500);
-                    text1.Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
-                    isExist[currentFetchNum] = true;
+                while (result.contentList.Count > 0) {
+                    danmuStorage.Add(result.contentList[0]);
+                    result.contentList.RemoveAt(0);
                 }
             }
             else {
-                textFetched = "获取时出现错误";
+                Debug.WriteLine("获取时出现错误");
             }
+            getWebContentTimer.Stop();
             //写两个函数 一个取数据 一个更新界面
+        }
+
+        private void getWebContentTimeOut(object sender, EventArgs e) {
+            fetchBW.CancelAsync();
+            Debug.WriteLine("Time Out When Get Web Content.");
         }
 
         private void UpdateText(int num) {
             //从网络上获取字符串
             if (isExist[num] != true) {
                 //建立一个新的文字块，然后从网上获取信息，设置好文字块的属性，加入到Grid中
-                TextBlock text1 = grid.FindName("newText" + num.ToString()) as TextBlock;
-                text1.Text = GetWebContent(setting.getSOURCE());
-                Thread.Sleep(1000);
-                //设置对齐方式
-                Random ran = new Random();
-                int RandKey = ran.Next(0, 500);
-                text1.Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
-                isExist[num] = true;
+                if (danmuStorage.Count > 0) {
+                    TextBlock text1 = grid.FindName("newText" + num.ToString()) as TextBlock;
+                    text1.Text = danmuStorage[0];
+                    danmuStorage.RemoveAt(0);
+                    //设置对齐方式
+                    Random ran = new Random();
+                    int RandKey = ran.Next(0, 500);
+                    text1.Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
+                    isExist[num] = true;
+                }
+                if(danmuStorage.Count < NUM) {
+                    if (fetchBW.IsBusy == false) {
+                        getWebContentTimer.Start();
+                        fetchBW.RunWorkerAsync();
+                    }
+                    //this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new DispatcherDelegateFetchWebContent(this.updateText), i);
+                }
             }
-            //text1.Margin = new Thickness(0,155,0,185);
         }
 
         private void RemoveText(int num) {

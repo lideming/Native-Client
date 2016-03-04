@@ -10,7 +10,7 @@ namespace DanMu
     class setting
     {
         private static int NUM = 100; //弹幕数量
-        private static int DURATION = 1; //弹幕获取间隔
+        private static int DURATION = 100; //弹幕获取间隔
         private static int SPEED = 2; //弹幕移动速度
         private static String SOURCE = "http://danmu.zhengzi.me/controller/desktop.php?hashUser=b3e72f25cea55fd55623124cc59c4b0c&hashPass=202cb962ac59075b964b07152d234b70&function=getSeq&para=1";
 
