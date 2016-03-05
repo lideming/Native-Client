@@ -320,6 +320,7 @@ namespace DanMu
             catch (FileNotFoundException e) {
                 System.Windows.MessageBox.Show("未找到配置文件，将默认初始化。", "云弹幕",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                setting.SaveSetting();
             }
             catch(FormatException e) {
                 System.Windows.MessageBox.Show("配置文件中存在格式错误。", "云弹幕",
