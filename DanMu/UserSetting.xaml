@@ -21,6 +21,7 @@
                         MethodName="GetProperties" x:Key="colorPropertiesOdp">
         </ObjectDataProvider>
     </Window.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -30,24 +31,32 @@
             <RowDefinition />
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+
         <GroupBox x:Name="groupBoxFontSetting" Header="字体设置" Margin="10">
             <Canvas Grid.Column="0">
+                <Label x:Name="labelFontFamily" Content="字体样式" 
+                       Canvas.Left="10" Canvas.Top="11" 
+                       FontSize="12" Width="60"/>
                 <ComboBox x:Name="comboBoxFontFamily" 
                       HorizontalAlignment="Left" VerticalAlignment="Top" 
-                      Canvas.Left="88" Canvas.Top="14" Width="120">
+                      Canvas.Left="88" Canvas.Top="14" Width="120" TabIndex="1">
                     <ComboBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel></VirtualizingStackPanel>
                         </ItemsPanelTemplate>
                     </ComboBox.ItemsPanel>
                 </ComboBox>
-                <Label x:Name="labelFontFamily" Content="字体样式" 
-                       Canvas.Left="10" Canvas.Top="10" 
+                <Label x:Name="labelFontFamilyTips" Content="" 
+                       Canvas.Left="88" Canvas.Top="35" 
+                       Width="120" Foreground="#FF8F8F8F"/>
+
+                <Label x:Name="labelFontColor" Content="字体颜色" 
+                       Canvas.Left="10" Canvas.Top="74" 
                        FontSize="12" Width="60"/>
                 <ComboBox x:Name="comboBoxFontColor" 
-                          Canvas.Left="88" Canvas.Top="56" Width="120" 
+                          Canvas.Left="88" Canvas.Top="76" Width="120" 
                           HorizontalContentAlignment="Stretch" 
-                          ItemsSource="{Binding Source={StaticResource colorPropertiesOdp}}">
+                          ItemsSource="{Binding Source={StaticResource colorPropertiesOdp}}" TabIndex="2">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -57,31 +66,75 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Label x:Name="labelFontColor" Content="字体颜色" 
-                       Canvas.Left="10" Canvas.Top="54" 
-                       FontSize="12" Width="60"/>
+                <Label x:Name="labelFontColorTips" Content="请注意修改字体颜色。" 
+                       Canvas.Left="88" Canvas.Top="97" 
+                       Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
+
+                <Label x:Name="labelFontSize" Content="字体大小" 
+                       Canvas.Left="10" Canvas.Top="135"
+                       FontSize="12" Width="60" ToolTip="字体大小"/>
                 <ComboBox x:Name="comboBoxFontSize"
                           HorizontalAlignment="Left" VerticalAlignment="Top" 
-                          Width="120" Canvas.Left="88" Canvas.Top="103"
-                          FontSize="12" ToolTip="字体大小"/>
-                <Label x:Name="labelFontSize" Content="字体大小" 
-                       Canvas.Left="10" Canvas.Top="101"
-                       FontSize="12" Width="60" ToolTip="字体大小"/>
-                <CheckBox x:Name="checkBoxFontWeight" Content="粗体" Canvas.Left="14" Canvas.Top="156"/>
-                <CheckBox x:Name="checkBoxFontStyle" Content="斜体" Canvas.Left="88" Canvas.Top="156"/>
+                          Width="120" Canvas.Left="88" Canvas.Top="137"
+                          FontSize="12" ToolTip="字体大小" TabIndex="3"/>
+                <Label x:Name="labelFontSizeTips" Content="(1-320)" 
+                       Canvas.Left="88" Canvas.Top="158" 
+                       Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
+
+                <CheckBox x:Name="checkBoxFontWeight" Content="粗体" Canvas.Left="14" Canvas.Top="198" TabIndex="4"/>
+                <CheckBox x:Name="checkBoxFontStyle" Content="斜体" Canvas.Left="88" Canvas.Top="198" TabIndex="5"/>
             </Canvas>
         </GroupBox>
-        <GroupBox Grid.Column="1" x:Name="groupBoxOtherSetting" Header="程序设置" 
-                  Margin="10"/>
+
+        <GroupBox Grid.Column="1" x:Name="groupBoxOtherSetting" 
+                  Header="弹幕设置" 
+                  Margin="10">
+            <Canvas>
+                <Label x:Name="labelNum" Content="弹幕最大数量"
+                       Canvas.Left="10" Canvas.Top="11"/>
+                <TextBox x:Name="textBoxNum"
+                         Canvas.Left="121" Canvas.Top="14" 
+                         TextWrapping="NoWrap" 
+                         Height="23" Width="120" TabIndex="6"/>
+                <Label x:Name="labelNumTips" Content="(1-1000)" 
+                       Canvas.Left="121" Canvas.Top="37" 
+                       Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
+
+                <Label x:Name="labelDuration" Content="弹幕获取速度(ms)" 
+                       Canvas.Left="10" Canvas.Top="74"/>
+                <TextBox x:Name="textBoxDuration" 
+                         Canvas.Left="121" Canvas.Top="76" 
+                         TextWrapping="NoWrap" 
+                         Height="23"  Width="120" TabIndex="7"/>
+                <Label x:Name="labelDurationTips" Content="(1-10000)" 
+                       Canvas.Left="121" Canvas.Top="99" 
+                       Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
+
+                <Label x:Name="labelSpeed" Content="弹幕移动速度" 
+                       Canvas.Left="10" Canvas.Top="136"/>
+                <TextBox x:Name="textBoxSpeed"  
+                         Canvas.Left="121" Canvas.Top="138"
+                         TextWrapping="Wrap"
+                         Height="23" Width="120" TabIndex="8"/>
+                <Label x:Name="labelSpeedTips" Content="(1-100)" 
+                       Canvas.Left="121" Canvas.Top="161" 
+                       Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
+
+            </Canvas>
+        </GroupBox>
         <Grid Grid.Column="1" Grid.Row="1" Height="30" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="buttonOk" Content="确定" Margin="20 5"></Button>
+            <Button x:Name="buttonOk" Content="确定" Margin="20 5" TabIndex="9"/>
             <Button x:Name="buttonCancel" Content="取消" 
                     Grid.Column="1" Margin="20 5"
-                    Click="buttonCancel_Click"/>
+                    Click="buttonCancel_Click" TabIndex="10"/>
         </Grid>
+        <Button x:Name="buttonReset" Content="默认"
+                HorizontalAlignment="Left" Margin="26,15,0,0" 
+                Grid.Row="1" VerticalAlignment="Top" 
+                Width="90" Click="buttonReset_Click" TabIndex="11"/>
     </Grid>
 </Window>

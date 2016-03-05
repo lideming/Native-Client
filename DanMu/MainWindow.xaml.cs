@@ -8,7 +8,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using System.Security.Cryptography;
+using System.Windows.Media;
 using System.IO;
 using Newtonsoft.Json.Linq;
 
@@ -20,6 +20,8 @@ namespace DanMu
     public partial class MainWindow : Window
     {
         private static int NUM = setting.getNUM(); //在开始时获取设定的弹幕数量，重新设置弹幕数量需要重启方可生效
+        private static double screenWidth = SystemParameters.PrimaryScreenWidth;
+        private static double screenHeight = SystemParameters.PrimaryScreenHeight;
         private static List<string> danmuStorage = new List<string>();
         private static bool BOOLDISPLAYTIP = false;
         Boolean [] isExist = new Boolean[NUM]; //栈模式，栈的对应空间是否有弹幕
@@ -27,6 +29,7 @@ namespace DanMu
         int time = setting.getDURATION() -1; //时间片，用于计算弹幕获取间隔，起始时间设置为间隔-1，方便一运行就出弹幕
         private System.Timers.Timer mainTimer = null; //计时器
         private Timer getWebContentTimer = null;
+        private Timer displayRoomNumTimer = null;
 
         private BackgroundWorker fetchBW = new BackgroundWorker();
 
@@ -34,6 +37,8 @@ namespace DanMu
         private delegate void DispatcherDelegateFetchWebContent(int num);
 
         private System.Windows.Forms.NotifyIcon notifyIcon;
+
+        private TextBlock textRoomNum;
 
         class fetchedDanmu
         {
@@ -79,18 +84,32 @@ namespace DanMu
                 grid.Children.Add(text1);
                 grid.RegisterName("newText" + i.ToString(), text1);
             }
+
+            textRoomNum = new TextBlock();
+            textRoomNum.Text = "房间号：";
+            textRoomNum.Foreground = Brushes.Black;
+            textRoomNum.Background = Brushes.White;
+            textRoomNum.FontSize = 36;
+            grid.Children.Add(textRoomNum);
+            grid.RegisterName("textblockRoomNum",textRoomNum);
+            textRoomNum.Margin = new Thickness(screenWidth / 2 - 200, screenHeight / 2 - 20, screenWidth / 2 - 200, screenHeight / 2 - 20);
+            textRoomNum.Visibility = Visibility.Collapsed;
+            
             
             //开始计时
             mainTimer = new System.Timers.Timer();//这个1000是计时器的计时区间
             mainTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             mainTimer.Interval = 10; //计时间隔
-            mainTimer.Enabled = true;
 
             getWebContentTimer = new Timer();
             getWebContentTimer.Elapsed += new ElapsedEventHandler(getWebContentTimeOut);
             getWebContentTimer.Interval = 2000;
-            getWebContentTimer.Enabled = true;
             getWebContentTimer.AutoReset = false;
+
+            displayRoomNumTimer = new Timer();
+            displayRoomNumTimer.Elapsed += new ElapsedEventHandler(displayRoomNumTimeOut);
+            displayRoomNumTimer.Interval = 10000;
+            displayRoomNumTimer.AutoReset = false;
 
             mainTimer.Start();
         }
@@ -148,16 +167,23 @@ namespace DanMu
                 contentList.Add(textFetched);
             }
             else {
-                JObject parseResult = JObject.Parse(textFetched);
-                dynamic dy1 = parseResult as dynamic;
-                num = (int)dy1["seqNum"];
-                JArray dataArray = ((JArray)dy1["seqData"]);
-                if (dataArray != null) {
-                    JToken data = dataArray.First;
-                    while (data != null) {
-                        contentList.Add(data.ToString());
-                        data = data.Next;
+                num = 0;
+                try {
+                    JObject parseResult = JObject.Parse(textFetched);
+                    dynamic dy1 = parseResult as dynamic;
+                    num = (int)dy1["seqNum"];
+                    JArray dataArray = ((JArray)dy1["seqData"]);
+                    if (dataArray != null) {
+                        JToken data = dataArray.First;
+                        while (data != null) {
+                            contentList.Add(data.ToString());
+                            data = data.Next;
+                        }
                     }
+                }
+                catch (Newtonsoft.Json.JsonReaderException error) {
+                    Debug.WriteLine("Error: JsonReaderException");
+                    Debug.WriteLine("Fetch Text: " + textFetched);
                 }
             }
             fetchedDanmu result = new fetchedDanmu(num, contentList);
@@ -202,7 +228,7 @@ namespace DanMu
                     danmuStorage.RemoveAt(0);
                     //设置对齐方式
                     Random ran = new Random();
-                    int RandKey = ran.Next(0, 500);
+                    int RandKey = ran.Next(0, (int)screenHeight - 10);
                     text1.Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
                     isExist[num] = true;
                 }
@@ -313,42 +339,8 @@ namespace DanMu
             }
         }
 
-        static string GetMd5Hash(MD5 md5Hash, string input) {
-
-            // Convert the input string to a byte array and compute the hash.
-            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
-
-            // Create a new Stringbuilder to collect the bytes
-            // and create a string.
-            StringBuilder sBuilder = new StringBuilder();
-
-            // Loop through each byte of the hashed data 
-            // and format each one as a hexadecimal string.
-            for (int i = 0; i < data.Length; i++) {
-                sBuilder.Append(data[i].ToString("x2"));
-            }
-
-            // Return the hexadecimal string.
-            return sBuilder.ToString();
-        }
-
-        // Verify a hash against a string.
-        static bool VerifyMd5Hash(MD5 md5Hash, string input, string hash) {
-            // Hash the input.
-            string hashOfInput = GetMd5Hash(md5Hash, input);
-
-            // Create a StringComparer an compare the hashes.
-            StringComparer comparer = StringComparer.OrdinalIgnoreCase;
-
-            if (0 == comparer.Compare(hashOfInput, hash)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
         System.Windows.Forms.MenuItem menuStop;
+        System.Windows.Forms.MenuItem menuDisplayRoomNum;
 
         void InitialTray() {
             notifyIcon = new System.Windows.Forms.NotifyIcon();
@@ -357,17 +349,21 @@ namespace DanMu
             notifyIcon.Visible = true;
             notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_MouseClick);
 
+            menuDisplayRoomNum = new System.Windows.Forms.MenuItem("显示房间号");
             menuStop = new System.Windows.Forms.MenuItem("停止");
-            System.Windows.Forms.MenuItem menuSetting = new System.Windows.Forms.MenuItem("设置");
+            System.Windows.Forms.MenuItem menuSetting = new System.Windows.Forms.MenuItem("设置...");
+            System.Windows.Forms.MenuItem menuAbout = new System.Windows.Forms.MenuItem("关于...");
             System.Windows.Forms.MenuItem menuExit = new System.Windows.Forms.MenuItem("退出");
 
+            menuDisplayRoomNum.Click += new EventHandler(display_Click);
             menuStop.Click += new EventHandler(stop_Click);
-            menuExit.Click += new EventHandler(exit_Click);
             menuSetting.Click += new EventHandler(setting_Click);
+            menuAbout.Click += new EventHandler(about_Click);
+            menuExit.Click += new EventHandler(exit_Click);
 
             System.Windows.Forms.MenuItem[] children = new System.Windows.Forms.MenuItem[]
             {
-                menuStop,menuSetting,menuExit
+                menuDisplayRoomNum, menuStop, menuSetting, menuAbout, menuExit
             };
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(children);
 
@@ -391,6 +387,28 @@ namespace DanMu
             }
         }
 
+        void display_Click(object sender, EventArgs e) {
+            if (textRoomNum.Visibility == Visibility.Collapsed) {
+                textRoomNum.Visibility = Visibility.Visible;
+                displayRoomNumTimer.Start();
+                menuDisplayRoomNum.Text = "隐藏房间号";
+            }
+            else {
+                textRoomNum.Visibility = Visibility.Collapsed;
+                displayRoomNumTimer.Stop();
+                menuDisplayRoomNum.Text = "显示房间号";
+            }
+        }
+
+        private void displayRoomNumTimeOut(object sender, EventArgs e) {
+            this.Dispatcher.Invoke(DispatcherPriority.Normal, new DispatcherDelegateTimer(SetRoomNumInvisible));           
+        }
+
+        private void SetRoomNumInvisible() {
+            textRoomNum.Visibility = Visibility.Collapsed;
+            menuDisplayRoomNum.Text = "显示房间号";
+        }
+
         void stop_Click(object sender, EventArgs e) {
             if (isStop) {
                 mainTimer.Start();
@@ -410,6 +428,11 @@ namespace DanMu
             userSetting.Show();
         }
 
+        void about_Click(object sender, EventArgs e) {
+            AboutWindow aboutWindow = new AboutWindow();
+            aboutWindow.Show();
+        }
+
         void exit_Click(object sender, EventArgs e) {
             this.Close();
         }
@@ -421,7 +444,7 @@ namespace DanMu
         }
 
         private void Window_Closing(object sender, CancelEventArgs e) {
-            if (System.Windows.MessageBox.Show("是否退出弹幕？", "云弹幕", 
+            if (System.Windows.MessageBox.Show("退出云弹幕？", "云弹幕", 
                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {
                 notifyIcon.Dispose();
                 System.Windows.Application.Current.Shutdown();

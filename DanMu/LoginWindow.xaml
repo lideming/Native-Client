@@ -12,31 +12,33 @@
                VerticalAlignment="Top" Width="40"/>
         <TextBox x:Name="textBoxAccount" HorizontalAlignment="Left" 
                  Height="20" Margin="119,123,0,0" 
-                 TextWrapping="NoWrap" VerticalAlignment="Top" Width="120"/>
+                 TextWrapping="NoWrap" VerticalAlignment="Top" Width="120" TabIndex="1"/>
         <Label x:Name="labelPassword" Content="密码" 
                HorizontalAlignment="Left" Margin="71,165,0,0" 
                VerticalAlignment="Top" Width="40"/>
         <PasswordBox x:Name="passwordBox" 
                      Height="20"
                      HorizontalAlignment="Left" Margin="119,169,0,0" 
-                     VerticalAlignment="Top" Width="120"/>
+                     VerticalAlignment="Top" Width="120" TabIndex="2"/>
         <Button x:Name="buttonOk" Content="登录" 
                 HorizontalAlignment="Left" Margin="71,215,0,0" 
-                VerticalAlignment="Top" Width="75"/>
+                VerticalAlignment="Top" Width="75"
+                Click="buttonOk_Click" TabIndex="3"/>
         <Button x:Name="buttonCancel" Content="取消" 
                 HorizontalAlignment="Left" Margin="164,215,0,0" 
-                VerticalAlignment="Top" Width="75"/>
+                VerticalAlignment="Top" Width="75"
+                Click="buttonCancel_Click" TabIndex="4"/>
         <Image x:Name="imageLogo" HorizontalAlignment="Left" 
                Height="75" Margin="120,27,0,0" 
                VerticalAlignment="Top" Width="75"
                Source="danmu.ico"/>
-        <Label x:Name="labelBarCode" Content="扫描二维码" 
+        <Label x:Name="labelBarCode" Content="查看二维码" 
                HorizontalAlignment="Left" Margin="119,251,0,0" 
                VerticalAlignment="Top"/>
         <Image x:Name="imageBarCode" 
                HorizontalAlignment="Left" 
-               Height="100" Margin="98,102,0,0" 
-               VerticalAlignment="Top" Width="100"
+               Height="200" Margin="60,46,0,0" 
+               VerticalAlignment="Top" Width="200"
                Source="danmu.ico"/>
     </Grid>
 </Window>
