@@ -31,13 +31,13 @@
 
 在微信客户端中打开我们的公众号，发送`创建房间`并按向导输入账号和密码完成注册之后，在本地客户端使用您注册好的账号和密码进行登录即可。您可以将鼠标指针放在`查看二维码`上显示二维码，用微信“扫一扫”功能扫描二维码进入我们的公众号。
 
-![Logo](http://7xr64j.com1.z0.glb.clouddn.com/%40%2Fdanmu%2F1%2Flogin.png)
+![登录界面](http://7xr64j.com1.z0.glb.clouddn.com/%40%2Fdanmu%2F1%2Flogin.png)
 
 ### 使用
 
 登录成功后，云弹幕即开始工作。您可以在托盘图标上点击右键选择`暂停`以暂停弹幕的滚动。双击托盘图标即可使其最小化至系统托盘处。点击`显示房间号`会在您的屏幕中央显示您注册的账号所在的房间号，屏幕上显示的弹幕即您当前所在房间里的弹幕，与会者通过在公众号中加入房间即可发送弹幕到屏幕上显示。
 
-![Logo](http://7xr64j.com1.z0.glb.clouddn.com/%40%2Fdanmu%2F1%2Fmenu.png)
+![右键菜单](http://7xr64j.com1.z0.glb.clouddn.com/%40%2Fdanmu%2F1%2Fmenu.png)
 
 ### 设置
 
@@ -45,7 +45,7 @@
 
 您的当前设置会保存到程序目录的`setting.ini`文件中，不推荐您改动`setting.ini`文件。如果在启动时程序提示`配置文件错误`，您可以删除`setting.ini`，在下一次启动时程序会自动以默认设置生成一个新的配置文件。
 
-![Logo](http://7xr64j.com1.z0.glb.clouddn.com/%40%2Fdanmu%2F1%2Fsetting.png)
+![设置界面](http://7xr64j.com1.z0.glb.clouddn.com/%40%2Fdanmu%2F1%2Fsetting.png)
 
 ## 版本说明
 
