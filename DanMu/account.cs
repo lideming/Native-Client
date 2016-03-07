@@ -7,13 +7,13 @@ namespace DanMu
 {
     class account
     {
-        public string name;
-        public string password;
+        public static string name;
+        public static string password;
 
-        public string nameMD5;
-        public string passwordMD5;
+        public static string nameMD5;
+        public static string passwordMD5;
 
-        public void calcAccountMD5() {
+        public static void calcAccountMD5() {
             if (name != null && password != null) {
                 using (MD5 md5Hash = MD5.Create()) {
                     nameMD5 = GetMd5Hash(md5Hash, name);

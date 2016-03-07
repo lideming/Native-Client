@@ -9,6 +9,7 @@ namespace DanMu
     /// UserSetting.xaml 的交互逻辑
     /// </summary>
     public partial class UserSetting : Window {
+
         public delegate void settingChangeDelegate(object sender, EventArgs e);
 
         public event settingChangeDelegate settingChangeEvent;
