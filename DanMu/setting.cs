@@ -12,8 +12,6 @@ namespace DanMu
         private static int NUM = 20; //弹幕数量
         private static int DURATION = 100; //弹幕获取间隔
         private static int SPEED = 2; //弹幕移动速度
-        private static String SOURCE = "http://danmu.zhengzi.me/controller/desktop.php?hashUser=b3e72f25cea55fd55623124cc59c4b0c&hashPass=202cb962ac59075b964b07152d234b70&function=getSeq&para=1";
-
         private static Brush background = Brushes.Transparent;
         private static Brush foreground = Brushes.Black;
         private static FontFamily fontFamily = new FontFamily("微软雅黑");
@@ -25,7 +23,7 @@ namespace DanMu
         public static int getNUM() { return NUM; }
         public static int getDURATION() { return DURATION; }
         public static int getSPEED() { return SPEED; }
-        public static String getSOURCE() { return SOURCE; }
+        public static String getSOURCE() { return "http://danmu.zhengzi.me/controller/desktop.php?user=" + account.name + "&hashPass=" + account.passwordMD5 + "&func=getSeq&para=" + setting.getNUM().ToString(); }
         public static Brush getBackground() { return background; }
         public static Brush getForeground() { return foreground; }
         public static FontFamily getFontFamily() { return fontFamily; }
@@ -38,7 +36,6 @@ namespace DanMu
         public static void setNUM(int num) { NUM = num; }
         public static void setDURATION(int duration) { DURATION = duration; }
         public static void setSPEED(int speed) { SPEED = speed; }
-        public static void setSOURCE(string source) { SOURCE = source; }
         public static void setFontFamily(string fontFamilyText) { fontFamily = new FontFamily(fontFamilyText); }
         public static void setBackground(string backgroundColor) {
             Color newBackground = (Color)ColorConverter.ConvertFromString(backgroundColor);
@@ -71,7 +68,6 @@ namespace DanMu
                 settingFileSW.WriteLine("Num = " + NUM.ToString());
                 settingFileSW.WriteLine("Duration = " + DURATION.ToString());
                 settingFileSW.WriteLine("Speed = " + SPEED.ToString());
-                settingFileSW.WriteLine("Source = " + SOURCE.ToString());
                 settingFileSW.WriteLine("[Font]");
                 settingFileSW.WriteLine("Background = " + background.ToString());
                 settingFileSW.WriteLine("Foreground = " + foreground.ToString());

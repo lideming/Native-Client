@@ -81,9 +81,9 @@ namespace DanMu
 
             try {
                 using (WebClient client = new WebClient()) {
-                    byte[] buffer = client.DownloadData("http://danmu.zhengzi.me/controller/desktop.php?hashUser=" + nameMD5 + "&hashPass=" + passwordMD5 + "&function=checkUsr");
+                    byte[] buffer = client.DownloadData("http://danmu.zhengzi.me/controller/desktop.php?user=" + textBoxAccount.Text + "&hashPass=" + passwordMD5 + "&func=checkUsr");
                     string str = Encoding.GetEncoding("UTF-8").GetString(buffer, 0, buffer.Length);
-                    if (str == "\"validSuccess\"") {
+                    if (str == "true") {
                         account.name = textBoxAccount.Text;
                         account.password = passwordBox.Password;
                         account.nameMD5 = nameMD5;
@@ -101,16 +101,16 @@ namespace DanMu
                             // 将获取到的JSON进行解析得到获取的弹幕数量以及所有弹幕
                             JObject parseResult = JObject.Parse(str);
                             dynamic dy1 = parseResult as dynamic;
-                            if ((string)dy1["errMark"] == "validErr") {
-                                if ((int)dy1["errMsg"] == 0) {
+                            if ((string)dy1["errType"] == "validErr") {
+                                if ((int)dy1["errMark"] == 2) {
                                     Debug.WriteLine("Wrong UserName or Password.");
                                 }
-                                else if ((int)dy1["errMsg"] == 1) {
+                                /*else if ((int)dy1["errMsg"] == 1) {
                                     Debug.WriteLine("Incompleted UserName or Password.");
                                 }
                                 else {
                                     Debug.WriteLine("Unknown Error.");
-                                }
+                                }*/
                             }
                         }
                         catch (Newtonsoft.Json.JsonReaderException error) {

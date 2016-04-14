@@ -93,7 +93,7 @@ namespace DanMu
                 text.FontStyle = setting.getFontStyle();
                 text.FontWeight = setting.getFontWeight();
                 grid.Children.Add(text);
-                grid.RegisterName("newTex" + i.ToString(), text);
+                grid.RegisterName("textBlockDanmu" + i.ToString(), text);
             }
 
             // 初始化房间号textBlockRoomNum
@@ -225,6 +225,7 @@ namespace DanMu
             else {
                 num = 0;
                 try {
+                    Debug.WriteLine("Fetch:"+textFetched);
                     // 将获取到的JSON进行解析得到获取的弹幕数量以及所有弹幕
                     JObject parseResult = JObject.Parse(textFetched);
                     dynamic dy1 = parseResult as dynamic;
@@ -337,9 +338,6 @@ namespace DanMu
                 str = str.Substring("Speed = ".Length, str.Length - "Speed = ".Length);
                 setting.setSPEED(Int32.Parse(str));
                 str = settingFileSR.ReadLine();
-                str = str.Substring("Source = ".Length, str.Length - "Source = ".Length);
-                setting.setSOURCE(str);
-                settingFileSR.ReadLine();
                 str = settingFileSR.ReadLine();
                 str = str.Substring("Background = ".Length, str.Length - "Background = ".Length);
                 setting.setBackground(str);
@@ -392,6 +390,14 @@ namespace DanMu
             }
             catch(NullReferenceException e) {
                 System.Windows.MessageBox.Show("配置文件存在错误。", "云弹幕",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+            catch(ArgumentOutOfRangeException e) {
+                System.Windows.MessageBox.Show("配置文件存在错误。", "云弹幕",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+            catch{
+                System.Windows.MessageBox.Show("Fatal Error.", "云弹幕",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
         }
