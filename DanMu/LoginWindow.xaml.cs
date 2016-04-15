@@ -90,7 +90,7 @@ namespace DanMu
                         account.passwordMD5 = passwordMD5;
                         Debug.WriteLine("Login Success.");
                         System.Windows.MessageBox.Show("登录成功。", "云弹幕",
-                                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                                MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
                         // 获取房间号
                         MainWindow mainWindow = new MainWindow();
                         mainWindow.Show();

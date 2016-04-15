@@ -99,6 +99,7 @@ namespace DanMu
             // 初始化房间号textBlockRoomNum
             textBlockRoomNum = new TextBlock();
             textBlockRoomNum.Text = "房间号：";
+            textBlockRoomNum.HorizontalAlignment = HorizontalAlignment.Center;
             textBlockRoomNum.Foreground = Brushes.Black;
             textBlockRoomNum.Background = Brushes.White;
             textBlockRoomNum.FontSize = 36;
@@ -404,6 +405,7 @@ namespace DanMu
 
         System.Windows.Forms.MenuItem menuStop;
         System.Windows.Forms.MenuItem menuDisplayRoomNum;
+        System.Windows.Forms.MenuItem menuHide;
 
         /// <summary>
         /// 初始化系统托盘
@@ -416,19 +418,21 @@ namespace DanMu
             notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_MouseClick);
 
             menuDisplayRoomNum = new System.Windows.Forms.MenuItem("显示房间号");
-            menuStop = new System.Windows.Forms.MenuItem("停止");
+            menuStop = new System.Windows.Forms.MenuItem("暂停");
+            menuHide = new System.Windows.Forms.MenuItem("隐藏至托盘");
             System.Windows.Forms.MenuItem menuSetting = new System.Windows.Forms.MenuItem("设置...");
             System.Windows.Forms.MenuItem menuAbout = new System.Windows.Forms.MenuItem("关于...");
             System.Windows.Forms.MenuItem menuExit = new System.Windows.Forms.MenuItem("退出");
 
             menuDisplayRoomNum.Click += new EventHandler(display_Click);
             menuStop.Click += new EventHandler(stop_Click);
+            menuHide.Click += new EventHandler(hide_Click);
             menuSetting.Click += new EventHandler(setting_Click);
             menuAbout.Click += new EventHandler(about_Click);
             menuExit.Click += new EventHandler(exit_Click);
 
             System.Windows.Forms.MenuItem[] children = new System.Windows.Forms.MenuItem[]{
-                menuDisplayRoomNum, menuStop, menuSetting, menuAbout, menuExit
+                menuDisplayRoomNum, menuStop, menuHide, menuSetting, menuAbout, menuExit
             };
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(children);
 
@@ -438,17 +442,22 @@ namespace DanMu
         // 在系统托盘上点击鼠标时最小化 
         void notifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e) {
             if(e.Button == System.Windows.Forms.MouseButtons.Left) {
-                if(this.Visibility == Visibility.Visible) {
-                    this.Visibility = Visibility.Hidden;
-                    if (hasDisplayedBalloonTip == false) {
-                        notifyIcon.BalloonTipText = "程序已最小化至系统托盘。";
-                        notifyIcon.ShowBalloonTip(2000);
-                        hasDisplayedBalloonTip = true;
-                    }
+                if(this.WindowState == WindowState.Maximized) {
+                    this.WindowState = WindowState.Minimized;
+                    mainTimer.Stop();
+                    menuStop.Text = "继续";
+                    isStop = true;
                 }
                 else {
-                    this.Visibility = Visibility.Visible;
-                    this.Activate();
+                    this.WindowState = WindowState.Maximized;
+                    mainTimer.Start();
+                    menuStop.Text = "停止";
+                    isStop = false;
+                    if (textBlockRoomNum.Visibility == Visibility.Collapsed) {
+                        textBlockRoomNum.Visibility = Visibility.Visible;
+                    }
+                    textBlockRoomNum.Text = "正在显示弹幕";
+                    displayRoomNumTimer.Start();
                 }
             }
         }
@@ -456,6 +465,7 @@ namespace DanMu
         // 点击“显示房间号”时，在屏幕上显示房间号
         void display_Click(object sender, EventArgs e) {
             if (textBlockRoomNum.Visibility == Visibility.Collapsed) {
+                textBlockRoomNum.Text = "房间号：";
                 textBlockRoomNum.Visibility = Visibility.Visible;
                 displayRoomNumTimer.Start();
                 menuDisplayRoomNum.Text = "隐藏房间号";
@@ -482,13 +492,44 @@ namespace DanMu
         void stop_Click(object sender, EventArgs e) {
             if (isStop) {
                 mainTimer.Start();
-                menuStop.Text = "停止";
+                menuStop.Text = "暂停";
                 isStop = false;
             }
             else {
                 mainTimer.Stop();
                 menuStop.Text = "继续";
                 isStop = true;
+            }
+        }
+
+        void hide_Click(object sender, EventArgs e) {
+            if (this.Visibility == Visibility.Visible) {
+                this.Visibility = Visibility.Hidden;
+                if (hasDisplayedBalloonTip == false) {
+                    notifyIcon.BalloonTipText = "程序已最小化至系统托盘。";
+                    notifyIcon.ShowBalloonTip(2000);
+                    hasDisplayedBalloonTip = true;
+                }
+                mainTimer.Stop();
+                menuStop.Text = "(已最小化)";
+                menuStop.Enabled = false;
+                isStop = true;
+                menuHide.Text = "恢复显示弹幕";
+            }
+            else {
+                this.Visibility = Visibility.Visible;
+                this.Activate();
+                this.WindowState = WindowState.Maximized;
+                mainTimer.Start();
+                menuStop.Text = "停止";
+                menuStop.Enabled = true;
+                isStop = false;
+                menuHide.Text = "隐藏至托盘";
+                if (textBlockRoomNum.Visibility == Visibility.Collapsed) {
+                    textBlockRoomNum.Visibility = Visibility.Visible;
+                }
+                textBlockRoomNum.Text = "正在显示弹幕";
+                displayRoomNumTimer.Start();
             }
         }
 
@@ -512,8 +553,12 @@ namespace DanMu
 
         // 当窗口状态变化（最小化）时
         void Systray_StateChanged(object sender, EventArgs e) {
-            if(this.WindowState == WindowState.Minimized) {
-                this.Visibility = Visibility.Hidden;
+            if(this.WindowState == WindowState.Maximized) {
+                if (textBlockRoomNum.Visibility == Visibility.Collapsed) {
+                    textBlockRoomNum.Visibility = Visibility.Visible;
+                }
+                textBlockRoomNum.Text = "正在显示弹幕";
+                displayRoomNumTimer.Start();
             }
         }
 
