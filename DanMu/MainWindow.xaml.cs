@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using System.Windows.Media;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace DanMu
 {
@@ -30,11 +31,15 @@ namespace DanMu
         // 气泡提示用于第一次最小化时提示用户软件被最小化至系统托盘
         Boolean [] isExist = new Boolean[NUM]; // 用于显示对应Textblock是否对应的有弹幕
         Boolean isStop = false; // 是否被停止
+        Boolean isDemo = false;
+
+        double textHeight = 10;
 
         int time = setting.getDURATION() -1; // 时间片，用于计算弹幕获取间隔，起始时间设置为间隔-1，方便一运行就出弹幕
         private System.Timers.Timer mainTimer = null; // 主计时器
         private Timer getWebContentTimer = null; // 从网络获取数据的超时计时器
         private Timer displayRoomNumTimer = null; // 显示房间号的超时计时器
+        private Timer secretFunctionTimer = null;
 
         private BackgroundWorker fetchBW = new BackgroundWorker(); // 后台获取网络数据的后台进程
 
@@ -44,6 +49,14 @@ namespace DanMu
 
         private System.Windows.Forms.NotifyIcon notifyIcon; // 托盘图标
         private TextBlock textBlockRoomNum; // 显示房间号的TextBlock
+        private List<TextBlock> textBlockDanmu = new List<TextBlock>();
+
+        private List<string> colorList = new List<string>();
+        private List<string> fontFamilyList = new List<string>();
+
+        private Random ran = new Random(100);
+
+        private StreamReader fillingTextSR;
 
         class fetchedData
             // 用于存储从网络获取的弹幕内容
@@ -72,6 +85,38 @@ namespace DanMu
 
             // 尝试从 setting.ini 中恢复设置
             RestoreSetting();
+            FormattedText formattedText = new FormattedText(
+                "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor",
+                CultureInfo.GetCultureInfo("en-us"),
+                FlowDirection.LeftToRight,
+                new Typeface(setting.getFontFamily().ToString()),
+                setting.getFontSize(),
+                setting.getForeground());
+            textHeight = formattedText.Height;
+
+            try {
+                string settingFilePath = System.Windows.Forms.Application.StartupPath + "\\fillingText.txt";
+                fillingTextSR = new StreamReader(settingFilePath, Encoding.Default);
+            }
+            catch {
+                Debug.WriteLine("Can't Find FillingText.txt.");
+            }
+
+            foreach (FontFamily _f in Fonts.SystemFontFamilies) {
+                LanguageSpecificStringDictionary _font = _f.FamilyNames;
+                if (_font.ContainsKey(System.Windows.Markup.XmlLanguage.GetLanguage("zh-cn"))) {
+                    string _fontName = null;
+                    if (_font.TryGetValue(System.Windows.Markup.XmlLanguage.GetLanguage("zh-cn"), out _fontName)) {
+                        fontFamilyList.Add(_fontName);
+                    }
+                }
+            }
+
+            Type type = typeof(System.Windows.Media.Brushes);
+            System.Reflection.PropertyInfo[] info = type.GetProperties();
+            foreach (System.Reflection.PropertyInfo pi in info) {
+                colorList.Add(pi.Name);
+            }
 
             // 设置后台进程的属性
             fetchBW.WorkerReportsProgress = true;
@@ -94,6 +139,7 @@ namespace DanMu
                 text.FontWeight = setting.getFontWeight();
                 grid.Children.Add(text);
                 grid.RegisterName("textBlockDanmu" + i.ToString(), text);
+                textBlockDanmu.Add(text);
             }
 
             // 初始化房间号textBlockRoomNum
@@ -101,7 +147,7 @@ namespace DanMu
             textBlockRoomNum.Text = "房间号：";
             textBlockRoomNum.HorizontalAlignment = HorizontalAlignment.Center;
             textBlockRoomNum.Foreground = Brushes.Black;
-            textBlockRoomNum.Background = Brushes.White;
+            textBlockRoomNum.Background = new SolidColorBrush(Color.FromArgb(255,242,193,46));
             textBlockRoomNum.FontSize = 36;
             grid.Children.Add(textBlockRoomNum);
             grid.RegisterName("textblockRoomNum",textBlockRoomNum);
@@ -123,6 +169,11 @@ namespace DanMu
             displayRoomNumTimer.Elapsed += new ElapsedEventHandler(displayRoomNumTimeOut);
             displayRoomNumTimer.Interval = 10000;
             displayRoomNumTimer.AutoReset = false;
+
+            secretFunctionTimer = new Timer();
+            secretFunctionTimer.Elapsed += new ElapsedEventHandler(secretFunction);
+            secretFunctionTimer.Interval = 10000;
+            secretFunctionTimer.AutoReset = true;
 
             // 主计时器开始计时
             mainTimer.Start();
@@ -184,13 +235,19 @@ namespace DanMu
             if (isExist[num] != true){
                 //建立一个新的文字块，然后从网上获取信息，设置好文字块的属性，加入到Grid中
                 if (danmuStorage.Count > 0){
-                    TextBlock text1 = grid.FindName("textBlockDanmu" + num.ToString()) as TextBlock;
-                    text1.Text = danmuStorage[0];
+                    textBlockDanmu[num].Text = danmuStorage[0];
                     danmuStorage.RemoveAt(0);
                     //设置对齐方式
-                    Random ran = new Random();
-                    int RandKey = ran.Next(0, (int)screenHeight - 10);
-                    text1.Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
+                    int randomNumber = ran.Next(0, (int)(screenHeight / textHeight));
+                    int RandKey = randomNumber * (int)textHeight;//(0, ((int)screenHeight - 10));
+                    textBlockDanmu[num].Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
+                    if (setting.getRandomColor()) {
+                        Color foregroundColor = (Color)ColorConverter.ConvertFromString(colorList[ran.Next(0,colorList.Count)]);
+                        textBlockDanmu[num].Foreground = new SolidColorBrush(foregroundColor); 
+                    }
+                    if(setting.getRandomFontFamily()){
+                        textBlockDanmu[num].FontFamily = new FontFamily(fontFamilyList[ran.Next(0, fontFamilyList.Count)]);
+                    }
                     isExist[num] = true;
                 }
                 if (danmuStorage.Count < NUM){
@@ -370,6 +427,22 @@ namespace DanMu
                 str = settingFileSR.ReadLine();
                 str = str.Substring("Opactity = ".Length, str.Length - "Opactity = ".Length);
                 setting.setOpactity(Double.Parse(str));
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Random Color = ".Length, str.Length - "Random Color = ".Length);
+                if(str == "True") {
+                    setting.setRandomColor(true);
+                }
+                else {
+                    setting.setRandomColor(false);
+                }
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Random FontFamily = ".Length, str.Length - "Random FontFamily = ".Length);
+                if (str == "True") {
+                    setting.setRandomFontFamily(true);
+                }
+                else {
+                    setting.setRandomFontFamily(false);
+                }
                 settingFileSR.Close();
             }
             catch (FileNotFoundException e) {
@@ -406,6 +479,7 @@ namespace DanMu
         System.Windows.Forms.MenuItem menuStop;
         System.Windows.Forms.MenuItem menuDisplayRoomNum;
         System.Windows.Forms.MenuItem menuHide;
+        System.Windows.Forms.MenuItem menuSecretFunction;
 
         /// <summary>
         /// 初始化系统托盘
@@ -421,6 +495,7 @@ namespace DanMu
             menuStop = new System.Windows.Forms.MenuItem("暂停");
             menuHide = new System.Windows.Forms.MenuItem("隐藏至托盘");
             System.Windows.Forms.MenuItem menuSetting = new System.Windows.Forms.MenuItem("设置...");
+            menuSecretFunction = new System.Windows.Forms.MenuItem("开始展示");
             System.Windows.Forms.MenuItem menuAbout = new System.Windows.Forms.MenuItem("关于...");
             System.Windows.Forms.MenuItem menuExit = new System.Windows.Forms.MenuItem("退出");
 
@@ -428,11 +503,12 @@ namespace DanMu
             menuStop.Click += new EventHandler(stop_Click);
             menuHide.Click += new EventHandler(hide_Click);
             menuSetting.Click += new EventHandler(setting_Click);
+            menuSecretFunction.Click += new EventHandler(secretFunction_Click);
             menuAbout.Click += new EventHandler(about_Click);
             menuExit.Click += new EventHandler(exit_Click);
 
             System.Windows.Forms.MenuItem[] children = new System.Windows.Forms.MenuItem[]{
-                menuDisplayRoomNum, menuStop, menuHide, menuSetting, menuAbout, menuExit
+                menuDisplayRoomNum, menuStop, menuHide, menuSetting, menuSecretFunction, menuAbout, menuExit
             };
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(children);
 
@@ -566,6 +642,8 @@ namespace DanMu
         private void Window_Closing(object sender, CancelEventArgs e) {
             if (System.Windows.MessageBox.Show("退出云弹幕？", "云弹幕", 
                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {
+                if(fillingTextSR!=null)
+                    fillingTextSR.Close();
                 notifyIcon.Dispose();
                 System.Windows.Application.Current.Shutdown();
             }
@@ -587,14 +665,62 @@ namespace DanMu
             if(setting.SaveSetting()== false) {
                 Debug.WriteLine("设置文件未能保存。");
             }
+            bool specifiedColor = !setting.getRandomColor();
+            bool specifiedFontFamily = !setting.getRandomFontFamily();
             for(int i = 0;i< NUM; i++) {
-                TextBlock textTemp = grid.FindName("textBlockDanmu" + i.ToString()) as TextBlock;
-                textTemp.FontSize = setting.getFontSize();
-                textTemp.FontFamily = setting.getFontFamily();
-                textTemp.Foreground = setting.getForeground();
-                textTemp.FontStyle = setting.getFontStyle();
-                textTemp.FontWeight = setting.getFontWeight();
+                textBlockDanmu[i].FontSize = setting.getFontSize();
+                if (specifiedFontFamily)
+                    textBlockDanmu[i].FontFamily = setting.getFontFamily();
+                if (specifiedColor)
+                    textBlockDanmu[i].Foreground = setting.getForeground();
+                textBlockDanmu[i].FontStyle = setting.getFontStyle();
+                    textBlockDanmu[i].FontWeight = setting.getFontWeight();
+            }
+            FormattedText formattedText = new FormattedText(
+                "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor",
+                CultureInfo.GetCultureInfo("en-us"),
+                FlowDirection.LeftToRight,
+                new Typeface(setting.getFontFamily().ToString()),
+                setting.getFontSize(),
+                setting.getForeground());
+            textHeight = formattedText.Height;
+        }
+
+        void secretFunction_Click(object sender, EventArgs e) {
+            if (isDemo) {
+                menuSecretFunction.Text = "开始展示";
+                isDemo = false;
+                secretFunctionTimer.Stop();
+                danmuStorage.Clear();
+            }
+            else {
+                menuSecretFunction.Text = "结束演示";
+                isDemo = true;
+                secretFunctionTimer.Interval = (NUM-1) * setting.getDURATION();
+                secretFunctionTimer.Start();
             }
         }
+
+        void secretFunction(object sender, EventArgs e) {
+            try {        
+                while(danmuStorage.Count<= NUM) {
+                    if (fillingTextSR.Peek() >= 0) {
+                        danmuStorage.Add(fillingTextSR.ReadLine());
+                    }
+                    else {
+                        fillingTextSR.BaseStream.Seek(0, SeekOrigin.Begin);
+                        fillingTextSR.DiscardBufferedData();
+                    }
+                }
+            }
+            catch {
+                secretFunctionTimer.Stop();
+                isDemo = false;
+                menuSecretFunction.Text = "开始展示";
+                System.Windows.MessageBox.Show("File Not Found，Secret Function Initialization Failed.", "云弹幕",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+        }
+
     }
 }

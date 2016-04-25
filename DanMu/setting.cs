@@ -19,6 +19,8 @@ namespace DanMu
         private static FontWeight fontWeight = FontWeights.Normal;
         private static double fontSize = 36;
         private static double opactity = 1; // (Between 0.0-1.0)
+        private static bool randomColor = false;
+        private static bool randomFontFamily = false;
 
         public static int getNUM() { return NUM; }
         public static int getDURATION() { return DURATION; }
@@ -31,6 +33,8 @@ namespace DanMu
         public static FontWeight getFontWeight() { return fontWeight; }
         public static double getFontSize() { return fontSize; }
         public static double getOpactity() { return opactity; }
+        public static bool getRandomColor() { return randomColor; }
+        public static bool getRandomFontFamily (){ return randomFontFamily; }
 
 
         public static void setNUM(int num) { NUM = num; }
@@ -49,6 +53,8 @@ namespace DanMu
         public static void setFontStyle(FontStyle newFontStyle) { fontStyle = newFontStyle; }
         public static void setFontWeight(FontWeight newFontWeight) { fontWeight = newFontWeight; }
         public static void setOpactity(double newOpactity) { opactity = newOpactity; }
+        public static void setRandomColor(bool newRandomColor) { randomColor = newRandomColor; }
+        public static void setRandomFontFamily(bool newRandomFontFamily) { randomFontFamily = newRandomFontFamily; }
 
         public static bool SaveSetting() {
             string settingFilePath = System.IO.Directory.GetCurrentDirectory() + "\\setting.ini";
@@ -76,6 +82,8 @@ namespace DanMu
                 settingFileSW.WriteLine("FontWeight = " + fontWeight.ToString());
                 settingFileSW.WriteLine("FontSize = " + fontSize.ToString());
                 settingFileSW.WriteLine("Opactity = " + opactity.ToString());
+                settingFileSW.WriteLine("Random Color = " + randomColor.ToString());
+                settingFileSW.WriteLine("Random FontFamily = " + randomFontFamily.ToString());         
                 settingFileSW.Close();
                 fs.Close();
                 return true;
@@ -85,8 +93,8 @@ namespace DanMu
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
             finally {
-                fs.Close();
                 settingFileSW.Close();
+                fs.Close();
             }         
             return false;
         }

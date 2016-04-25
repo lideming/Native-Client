@@ -83,6 +83,8 @@
 
                 <CheckBox x:Name="checkBoxFontWeight" Content="粗体" Canvas.Left="14" Canvas.Top="198" TabIndex="4"/>
                 <CheckBox x:Name="checkBoxFontStyle" Content="斜体" Canvas.Left="88" Canvas.Top="198" TabIndex="5"/>
+                <CheckBox x:Name="checkBoxRandomColor" Content="随机字体颜色" Canvas.Left="14" Canvas.Top="243" Checked="checkBoxRandomColor_Checked" Unchecked="checkBoxRandomColor_Unchecked"/>
+                <CheckBox x:Name="checkBoxRandomFontFamily" Content="随机字体样式" Canvas.Left="14" Canvas.Top="221" Checked="checkBoxRandomFontFamily_Checked" Unchecked="checkBoxRandomFontFamily_Unchecked"/>
             </Canvas>
         </GroupBox>
 

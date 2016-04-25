@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Microsoft.Win32;
 
 namespace DanMu
 {
@@ -14,6 +15,10 @@ namespace DanMu
     public partial class LoginWindow : Window
     {
         public LoginWindow() {
+            if(RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
+                OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4.0\") == null) {
+                this.Close();
+            }
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ResizeMode = ResizeMode.NoResize;
 
@@ -134,5 +139,6 @@ namespace DanMu
         private void buttonCancel_Click(object sender, RoutedEventArgs e) {
             this.Close();
         }
+
     }
 }

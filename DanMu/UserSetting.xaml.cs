@@ -61,6 +61,8 @@ namespace DanMu
             if (setting.getFontWeight() == FontWeights.Bold) {
                 checkBoxFontWeight.IsChecked = true;
             }
+            checkBoxRandomColor.IsChecked = setting.getRandomColor();
+            checkBoxRandomFontFamily.IsChecked = setting.getRandomFontFamily();
 
             textBoxNum.Text = setting.getNUM().ToString();
             textBoxDuration.Text = setting.getDURATION().ToString();
@@ -112,10 +114,7 @@ namespace DanMu
                 }
             }
 
-            setting.setFontFamily(((TextBlock)comboBoxFontFamily.SelectedItem).Text);
-            string selectedColor = comboBoxFontColor.SelectedItem.ToString();
-            selectedColor = selectedColor.Substring("System.Windows.Media.Color ".Length, selectedColor.Length - "System.Windows.Media.Color ".Length);
-            setting.setForeground(selectedColor);
+            
             setting.setFontSize((int)comboBoxFontSize.SelectedItem);
             if (checkBoxFontStyle.IsChecked == true) {
                 setting.setFontStyle(FontStyles.Italic);
@@ -128,6 +127,22 @@ namespace DanMu
             }
             else {
                 setting.setFontWeight(FontWeights.Normal);
+            }
+            if(checkBoxRandomColor.IsChecked == true) {
+                setting.setRandomColor(true);
+            }
+            else {
+                setting.setRandomColor(false);
+                string selectedColor = comboBoxFontColor.SelectedItem.ToString();
+                selectedColor = selectedColor.Substring("System.Windows.Media.Color ".Length, selectedColor.Length - "System.Windows.Media.Color ".Length);
+                setting.setForeground(selectedColor);
+            }
+            if(checkBoxRandomFontFamily.IsChecked == true) {
+                setting.setRandomFontFamily(true);
+            }
+            else {
+                setting.setRandomFontFamily(false);
+                setting.setFontFamily(((TextBlock)comboBoxFontFamily.SelectedItem).Text);
             }
 
             setting.setNUM(int.Parse(textBoxNum.Text));
@@ -157,6 +172,22 @@ namespace DanMu
             textBoxNum.Text = "20";
             textBoxDuration.Text = "100";
             textBoxSpeed.Text = "2";
+        }
+
+        private void checkBoxRandomColor_Checked(object sender, RoutedEventArgs e) {
+            comboBoxFontColor.IsEnabled = false;
+        }
+
+        private void checkBoxRandomColor_Unchecked(object sender, RoutedEventArgs e) {
+            comboBoxFontColor.IsEnabled = true;
+        }
+
+        private void checkBoxRandomFontFamily_Checked(object sender, RoutedEventArgs e) {
+            comboBoxFontFamily.IsEnabled = false;
+        }
+
+        private void checkBoxRandomFontFamily_Unchecked(object sender, RoutedEventArgs e) {
+            comboBoxFontFamily.IsEnabled = true;
         }
     }
 }
