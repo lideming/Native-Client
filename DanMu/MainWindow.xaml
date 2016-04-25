@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DanMu"
         mc:Ignorable="d"
-        Title="云弹幕" Height="766" Width="1366"
+        Title="弹幕云" Height="766" Width="1366"
         WindowStyle="None" Background="#00FFFFFF" AllowsTransparency="True"
         Topmost="True" WindowState="Maximized"
         Closing="Window_Closing">

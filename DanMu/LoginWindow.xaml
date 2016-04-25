@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DanMu"
         mc:Ignorable="d"
-        Title="登录-云弹幕" Height="320" Width="320">
+        Title="登录-弹幕派" Height="320" Width="320">
     <Grid>
         <Label x:Name="labelAccount" Content="账号" 
                HorizontalAlignment="Left" Margin="71,119,0,0" 

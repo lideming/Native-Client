@@ -446,32 +446,32 @@ namespace DanMu
                 settingFileSR.Close();
             }
             catch (FileNotFoundException e) {
-                System.Windows.MessageBox.Show("未找到配置文件，将默认初始化。", "云弹幕",
+                System.Windows.MessageBox.Show("未找到配置文件，将默认初始化。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                 setting.SaveSetting();
             }
             catch(FormatException e) {
-                System.Windows.MessageBox.Show("配置文件中存在格式错误。", "云弹幕",
+                System.Windows.MessageBox.Show("配置文件中存在格式错误。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
             catch(OverflowException e) {
-                System.Windows.MessageBox.Show("配置文件中存在参数错误。", "云弹幕",
+                System.Windows.MessageBox.Show("配置文件中存在参数错误。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
             catch(IOException e) {
-                System.Windows.MessageBox.Show("配置文件存在错误。", "云弹幕",
+                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
             catch(NullReferenceException e) {
-                System.Windows.MessageBox.Show("配置文件存在错误。", "云弹幕",
+                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
             catch(ArgumentOutOfRangeException e) {
-                System.Windows.MessageBox.Show("配置文件存在错误。", "云弹幕",
+                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
             catch{
-                System.Windows.MessageBox.Show("Fatal Error.", "云弹幕",
+                System.Windows.MessageBox.Show("Fatal Error.", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
         }
@@ -486,7 +486,7 @@ namespace DanMu
         /// </summary>
         void InitialTray() {
             notifyIcon = new System.Windows.Forms.NotifyIcon();
-            notifyIcon.Text = "云弹幕";
+            notifyIcon.Text = "弹幕派";
             notifyIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Windows.Forms.Application.ExecutablePath);
             notifyIcon.Visible = true;
             notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon_MouseClick);
@@ -640,7 +640,7 @@ namespace DanMu
 
         // 当退出时，进行问询
         private void Window_Closing(object sender, CancelEventArgs e) {
-            if (System.Windows.MessageBox.Show("退出云弹幕？", "云弹幕", 
+            if (System.Windows.MessageBox.Show("退出弹幕派？", "弹幕派", 
                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {
                 if(fillingTextSR!=null)
                     fillingTextSR.Close();
@@ -717,7 +717,7 @@ namespace DanMu
                 secretFunctionTimer.Stop();
                 isDemo = false;
                 menuSecretFunction.Text = "开始展示";
-                System.Windows.MessageBox.Show("File Not Found，Secret Function Initialization Failed.", "云弹幕",
+                System.Windows.MessageBox.Show("File Not Found，Secret Function Initialization Failed.", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
         }

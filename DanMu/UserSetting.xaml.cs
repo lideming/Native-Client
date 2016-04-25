@@ -77,7 +77,7 @@ namespace DanMu
 
         private void buttonOk_Click(object sender, RoutedEventArgs e) {
             if (comboBoxFontSize.Text == "" || textBoxNum.Text == "" || textBoxSpeed.Text == "" || textBoxDuration.Text == "") {
-                System.Windows.MessageBox.Show("请输入所有设置项。", "云弹幕",
+                System.Windows.MessageBox.Show("请输入所有设置项。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                 return;
             }
@@ -85,36 +85,36 @@ namespace DanMu
                 try {
                     int fontSize = int.Parse(comboBoxFontSize.Text);
                     if (fontSize <= 0 || fontSize > 320) {
-                        System.Windows.MessageBox.Show("字体大小设置超出范围。", "云弹幕",
+                        System.Windows.MessageBox.Show("字体大小设置超出范围。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                         return;
                     }
                     int num = int.Parse(textBoxNum.Text);
                     if (num <= 0 || num > 1000) {
-                        System.Windows.MessageBox.Show("弹幕数量设置超出范围。", "云弹幕",
+                        System.Windows.MessageBox.Show("弹幕数量设置超出范围。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                         return;
                     }
                     int duration = int.Parse(textBoxDuration.Text);
                     if (duration <= 0 || duration > 10000) {
-                        System.Windows.MessageBox.Show("弹幕获取时间设置超出范围。", "云弹幕",
+                        System.Windows.MessageBox.Show("弹幕获取时间设置超出范围。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                         return;
                     }
                     int speed = int.Parse(textBoxSpeed.Text);
                     if (speed <= 0 || speed > 100) {
-                        System.Windows.MessageBox.Show("弹幕移动速度设置超出范围。", "云弹幕",
+                        System.Windows.MessageBox.Show("弹幕移动速度设置超出范围。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                         return;
                     }
                 }
                 catch (FormatException formatError) {
-                    System.Windows.MessageBox.Show("输入格式错误，请检查。", "云弹幕",
+                    System.Windows.MessageBox.Show("输入格式错误，请检查。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                     return;
                 }
                 catch (OverflowException overflowError) {
-                    System.Windows.MessageBox.Show("值溢出，请检查。", "云弹幕",
+                    System.Windows.MessageBox.Show("值溢出，请检查。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                     return;
                 }
