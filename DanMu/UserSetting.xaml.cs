@@ -61,7 +61,13 @@ namespace DanMu
             if (setting.getFontWeight() == FontWeights.Bold) {
                 checkBoxFontWeight.IsChecked = true;
             }
+            if (setting.getRandomColor()) {
+                comboBoxFontColor.IsEnabled = false;
+            }
             checkBoxRandomColor.IsChecked = setting.getRandomColor();
+            if (setting.getRandomFontFamily()) {
+                comboBoxFontFamily.IsEnabled = false;
+            }
             checkBoxRandomFontFamily.IsChecked = setting.getRandomFontFamily();
 
             textBoxNum.Text = setting.getNUM().ToString();
