@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -25,11 +22,11 @@ namespace DanMu
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
+        private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vlc);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         private readonly Window _window;
         private MainWindow _mainWindow;
@@ -60,8 +57,22 @@ namespace DanMu
         }
 
         public void Dispose() {
-            UnregisterHotKey(_host.Handle, 100);
-            UnregisterHotKey(_host.Handle, 200);
+            //Dispose() calls Dispose(true)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~KeyboardHandler() {
+            //Finalizer calls Dispose(false)
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (disposing) {
+                //free managed resourses
+                UnregisterHotKey(_host.Handle, 100);
+                UnregisterHotKey(_host.Handle, 200);
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ namespace DanMu
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
         private static int NUM = setting.getNUM(); // 在开始时获取设定的弹幕数量，重新设置弹幕数量需要重启方可生效
         private static double screenWidth = SystemParameters.PrimaryScreenWidth; // 获取屏幕的长和宽
@@ -738,6 +738,42 @@ namespace DanMu
 
         private void CommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) {
             stop_Click(this, null);
+        }
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~MainWindow() {
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (disposing) {
+                if(displayRoomNumTimer!=null)
+                    displayRoomNumTimer.Close();
+                if(fetchBW!=null)
+                    fetchBW.Dispose();
+                if (fillingTextSR != null)
+                    fillingTextSR.Close();
+                if(getWebContentTimer!=null)
+                    getWebContentTimer.Close();
+                if(secretFunctionTimer!=null)
+                    secretFunctionTimer.Close();
+                if(mainTimer!=null)
+                    mainTimer.Close();
+                if(menuDisplayRoomNum!=null)
+                    menuDisplayRoomNum.Dispose();
+                if(menuHide!=null)
+                    menuHide.Dispose();
+                if(menuSecretFunction!=null)
+                    menuSecretFunction.Dispose();
+                if(menuStop!=null)
+                    menuStop.Dispose();
+                if(notifyIcon != null)
+                    notifyIcon.Dispose();
+            }
         }
     }
 }

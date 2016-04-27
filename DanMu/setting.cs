@@ -92,10 +92,10 @@ namespace DanMu
                 System.Windows.MessageBox.Show("写入配置文件时错误。", "云弹幕",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
-            finally {
+            if(settingFileSW != null)
                 settingFileSW.Close();
+            if(fs!=null)
                 fs.Close();
-            }         
             return false;
         }
     }
