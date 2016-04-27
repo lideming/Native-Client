@@ -565,7 +565,7 @@ namespace DanMu
         }
 
         // 点击“停止/继续”时，停止/继续主时钟
-        void stop_Click(object sender, EventArgs e) {
+        public void stop_Click(object sender, EventArgs e) {
             if (isStop) {
                 mainTimer.Start();
                 menuStop.Text = "暂停";
@@ -578,7 +578,7 @@ namespace DanMu
             }
         }
 
-        void hide_Click(object sender, EventArgs e) {
+        public void hide_Click(object sender, EventArgs e) {
             if (this.Visibility == Visibility.Visible) {
                 this.Visibility = Visibility.Hidden;
                 if (hasDisplayedBalloonTip == false) {
@@ -610,7 +610,7 @@ namespace DanMu
         }
 
         // 点击“设置…”时，打开设置窗口
-        void setting_Click(object sender, EventArgs e) {
+        public void setting_Click(object sender, EventArgs e) {
             UserSetting userSetting = new UserSetting();
             userSetting.settingChangeEvent += new UserSetting.settingChangeDelegate(settingChangeFunction);
             userSetting.Show();
@@ -722,5 +722,22 @@ namespace DanMu
             }
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e) {
+            new KeyboardHandler(this,this);
+        }
+
+        private void CommandBinding_CanExecute(object sender, System.Windows.Input.CanExecuteRoutedEventArgs e) {
+            if(this.Visibility == Visibility.Hidden) {
+                e.CanExecute = false;
+            }
+            else {
+                e.CanExecute = true;
+            }
+            
+        }
+
+        private void CommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) {
+            stop_Click(this, null);
+        }
     }
 }

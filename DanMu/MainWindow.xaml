@@ -5,9 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DanMu"
         mc:Ignorable="d"
-        Title="弹幕云" Height="766" Width="1366"
+        Title="弹幕派" Height="766" Width="1366"
         WindowStyle="None" Background="#00FFFFFF" AllowsTransparency="True"
         Topmost="True" WindowState="Maximized"
-        Closing="Window_Closing">
+        Closing="Window_Closing" Loaded="Window_Loaded">
+    <Window.Resources>
+        <RoutedUICommand x:Key="Stop" Text="Stop Danmaku" />
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Gesture="Space" Command="{StaticResource Stop}" />
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource Stop}"
+                        CanExecute="CommandBinding_CanExecute"
+                        Executed="CommandBinding_Executed" />
+    </Window.CommandBindings>
     <Grid Name="grid" />
 </Window>
