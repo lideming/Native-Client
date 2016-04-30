@@ -7,6 +7,8 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="用户设置" Height="400" Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
         Loaded="Window_Loaded">
     <Window.Resources>
         <ObjectDataProvider MethodName="GetType" 
@@ -39,7 +41,8 @@
                        FontSize="12" Width="60"/>
                 <ComboBox x:Name="comboBoxFontFamily" 
                       HorizontalAlignment="Left" VerticalAlignment="Top" 
-                      Canvas.Left="88" Canvas.Top="14" Width="120" TabIndex="1">
+                      Canvas.Left="88" Canvas.Top="14" Width="120"
+                          TabIndex="1" IsEditable="False" IsReadOnly="True">
                     <ComboBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel></VirtualizingStackPanel>
@@ -56,7 +59,9 @@
                 <ComboBox x:Name="comboBoxFontColor" 
                           Canvas.Left="88" Canvas.Top="76" Width="120" 
                           HorizontalContentAlignment="Stretch" 
-                          ItemsSource="{Binding Source={StaticResource colorPropertiesOdp}}" TabIndex="2">
+                          ItemsSource="{Binding Source={StaticResource colorPropertiesOdp}}"
+                          TabIndex="2"
+                          IsEditable="False" IsReadOnly="True">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -68,7 +73,7 @@
                 </ComboBox>
                 <Label x:Name="labelFontColorTips" Content="请注意修改字体颜色。" 
                        Canvas.Left="88" Canvas.Top="97" 
-                       Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
+                       Width="120" Foreground="#FF8F8F8F" FontSize="10" />
 
                 <Label x:Name="labelFontSize" Content="字体大小" 
                        Canvas.Left="10" Canvas.Top="135"
@@ -76,15 +81,26 @@
                 <ComboBox x:Name="comboBoxFontSize"
                           HorizontalAlignment="Left" VerticalAlignment="Top" 
                           Width="120" Canvas.Left="88" Canvas.Top="137"
-                          FontSize="12" ToolTip="字体大小" TabIndex="3"/>
+                          FontSize="12" ToolTip="字体大小" TabIndex="3"
+                          IsEditable="True" IsReadOnly="False"/>
                 <Label x:Name="labelFontSizeTips" Content="(1-320)" 
                        Canvas.Left="88" Canvas.Top="158" 
                        Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
 
-                <CheckBox x:Name="checkBoxFontWeight" Content="粗体" Canvas.Left="14" Canvas.Top="198" TabIndex="4"/>
-                <CheckBox x:Name="checkBoxFontStyle" Content="斜体" Canvas.Left="88" Canvas.Top="198" TabIndex="5"/>
-                <CheckBox x:Name="checkBoxRandomColor" Content="随机字体颜色" Canvas.Left="14" Canvas.Top="243" Checked="checkBoxRandomColor_Checked" Unchecked="checkBoxRandomColor_Unchecked"/>
-                <CheckBox x:Name="checkBoxRandomFontFamily" Content="随机字体样式" Canvas.Left="14" Canvas.Top="221" Checked="checkBoxRandomFontFamily_Checked" Unchecked="checkBoxRandomFontFamily_Unchecked"/>
+                <CheckBox x:Name="checkBoxFontWeight" Content="粗体" 
+                          Canvas.Left="14" Canvas.Top="198" 
+                          TabIndex="4"/>
+                <CheckBox x:Name="checkBoxFontStyle" Content="斜体" 
+                          Canvas.Left="88" Canvas.Top="198" 
+                          TabIndex="5"/>
+                <CheckBox x:Name="checkBoxRandomColor" Content="随机字体颜色" 
+                          Canvas.Left="14" Canvas.Top="243" 
+                          Checked="checkBoxRandomColor_Checked" Unchecked="checkBoxRandomColor_Unchecked"
+                          TabIndex="6"/>
+                <CheckBox x:Name="checkBoxRandomFontFamily" Content="随机字体样式"
+                          Canvas.Left="14" Canvas.Top="221" 
+                          Checked="checkBoxRandomFontFamily_Checked" Unchecked="checkBoxRandomFontFamily_Unchecked"
+                          TabIndex="7"/>
             </Canvas>
         </GroupBox>
 
@@ -97,7 +113,8 @@
                 <TextBox x:Name="textBoxNum"
                          Canvas.Left="121" Canvas.Top="14" 
                          TextWrapping="NoWrap" 
-                         Height="23" Width="120" TabIndex="6"/>
+                         Height="23" Width="120" 
+                         TabIndex="8"/>
                 <Label x:Name="labelNumTips" Content="(1-1000)" 
                        Canvas.Left="121" Canvas.Top="37" 
                        Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
@@ -107,7 +124,7 @@
                 <TextBox x:Name="textBoxDuration" 
                          Canvas.Left="121" Canvas.Top="76" 
                          TextWrapping="NoWrap" 
-                         Height="23"  Width="120" TabIndex="7"/>
+                         Height="23"  Width="120" TabIndex="9"/>
                 <Label x:Name="labelDurationTips" Content="(1-10000)" 
                        Canvas.Left="121" Canvas.Top="99" 
                        Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
@@ -117,7 +134,7 @@
                 <TextBox x:Name="textBoxSpeed"  
                          Canvas.Left="121" Canvas.Top="138"
                          TextWrapping="Wrap"
-                         Height="23" Width="120" TabIndex="8"/>
+                         Height="23" Width="120" TabIndex="10"/>
                 <Label x:Name="labelSpeedTips" Content="(1-100)" 
                        Canvas.Left="121" Canvas.Top="161" 
                        Width="120" Foreground="#FF8F8F8F" FontSize="10"/>
@@ -129,14 +146,16 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button x:Name="buttonOk" Content="确定" Margin="20 5" TabIndex="9"/>
+            <Button x:Name="buttonOk" Content="确定" 
+                    Margin="20 5" TabIndex="11" 
+                    Click="buttonOk_Click"/>
             <Button x:Name="buttonCancel" Content="取消" 
                     Grid.Column="1" Margin="20 5"
-                    Click="buttonCancel_Click" TabIndex="10"/>
+                    Click="buttonCancel_Click" TabIndex="12"/>
         </Grid>
         <Button x:Name="buttonReset" Content="默认"
                 HorizontalAlignment="Left" Margin="26,15,0,0" 
                 Grid.Row="1" VerticalAlignment="Top" 
-                Width="90" Click="buttonReset_Click" TabIndex="11"/>
+                Width="90" Click="buttonReset_Click" TabIndex="13"/>
     </Grid>
 </Window>

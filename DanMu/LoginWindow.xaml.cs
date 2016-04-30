@@ -19,22 +19,8 @@ namespace DanMu
                 OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4.0\") == null) {
                 this.Close();
             }
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            ResizeMode = ResizeMode.NoResize;
 
             InitializeComponent();
-
-            imageBarCode.Visibility = Visibility.Collapsed;
-
-            labelBarCode.MouseEnter += LabelBarCode_MouseEnter;
-            labelBarCode.MouseLeave += LabelBarCode_MouseLeave;
-
-            textBoxAccount.TextChanged += TextBoxAccount_TextChanged;
-            passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
-
-            KeyDown += LoginWindow_KeyDown;
-
-            buttonOk.IsEnabled = false;
         }
 
         private void LoginWindow_KeyDown(object sender, KeyEventArgs e) {
@@ -94,6 +80,17 @@ namespace DanMu
                         account.nameMD5 = nameMD5;
                         account.passwordMD5 = passwordMD5;
                         Debug.WriteLine("Login Success.");
+                        byte[] buffer2 =  client.DownloadData("http://danmu.zhengzi.me/controller/desktop.php?user=" + textBoxAccount.Text + "&hashPass=" + passwordMD5 + "&func=getRoomId");
+                        string str2 = Encoding.GetEncoding("UTF-8").GetString(buffer2, 0, buffer2.Length);
+                        if (str2 == "false") {
+                            System.Windows.MessageBox.Show("未注册房间，请扫描二维码进入官网进行注册。", "登录失败",
+                                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                            return;
+                        }
+                        else {
+                            if (str2.Length > 2)
+                                setting.setRoomId(str2.Substring(1,str2.Length-2));
+                        }
                         System.Windows.MessageBox.Show("登录成功。", "弹幕派",
                                 MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
                         // 获取房间号
@@ -103,19 +100,12 @@ namespace DanMu
                     }
                     else {
                         try {
-                            // 将获取到的JSON进行解析得到获取的弹幕数量以及所有弹幕
                             JObject parseResult = JObject.Parse(str);
                             dynamic dy1 = parseResult as dynamic;
                             if ((string)dy1["errType"] == "validErr") {
                                 if ((int)dy1["errMark"] == 2) {
                                     Debug.WriteLine("Wrong UserName or Password.");
                                 }
-                                /*else if ((int)dy1["errMsg"] == 1) {
-                                    Debug.WriteLine("Incompleted UserName or Password.");
-                                }
-                                else {
-                                    Debug.WriteLine("Unknown Error.");
-                                }*/
                             }
                         }
                         catch (Newtonsoft.Json.JsonReaderException error) {

@@ -15,18 +15,11 @@ namespace DanMu
         public event settingChangeDelegate settingChangeEvent;
 
         public UserSetting() {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            this.ResizeMode = ResizeMode.NoResize;
-
             InitializeComponent();
-
-            buttonOk.Click += new RoutedEventHandler(buttonOk_Click);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e) {
             //选择字体 
-            comboBoxFontFamily.IsEditable = false;
-            comboBoxFontFamily.IsReadOnly = true;
             foreach (FontFamily _f in Fonts.SystemFontFamilies) {
                 LanguageSpecificStringDictionary _font = _f.FamilyNames;
                 if (_font.ContainsKey(System.Windows.Markup.XmlLanguage.GetLanguage("zh-cn"))) {
@@ -48,8 +41,6 @@ namespace DanMu
             }
             comboBoxFontColor.SelectedIndex = 7;
 
-            comboBoxFontSize.IsEditable = true;
-            comboBoxFontSize.IsReadOnly = false;
             for (int i = 10; i <= 120; i += 2) {
                 comboBoxFontSize.Items.Add(i);
             }

@@ -21,6 +21,7 @@ namespace DanMu
         private static double opactity = 1; // (Between 0.0-1.0)
         private static bool randomColor = false;
         private static bool randomFontFamily = false;
+        private static string roomID;
 
         public static int getNUM() { return NUM; }
         public static int getDURATION() { return DURATION; }
@@ -35,6 +36,8 @@ namespace DanMu
         public static double getOpactity() { return opactity; }
         public static bool getRandomColor() { return randomColor; }
         public static bool getRandomFontFamily (){ return randomFontFamily; }
+
+        public static string getRoomId() { return roomID; }
 
 
         public static void setNUM(int num) { NUM = num; }
@@ -55,6 +58,7 @@ namespace DanMu
         public static void setOpactity(double newOpactity) { opactity = newOpactity; }
         public static void setRandomColor(bool newRandomColor) { randomColor = newRandomColor; }
         public static void setRandomFontFamily(bool newRandomFontFamily) { randomFontFamily = newRandomFontFamily; }
+        public static void setRoomId(string newRoomId) { roomID = newRoomId; }
 
         public static bool SaveSetting() {
             string settingFilePath = System.IO.Directory.GetCurrentDirectory() + "\\setting.ini";

@@ -58,6 +58,10 @@ namespace DanMu
 
         private StreamReader fillingTextSR;
 
+        private UserSetting userSetting = null;
+        private Help helpWindow = null;
+        private AboutWindow aboutWindow = null;
+
         class fetchedData
             // 用于存储从网络获取的弹幕内容
         {
@@ -495,6 +499,7 @@ namespace DanMu
             menuStop = new System.Windows.Forms.MenuItem("暂停");
             menuHide = new System.Windows.Forms.MenuItem("隐藏至托盘");
             System.Windows.Forms.MenuItem menuSetting = new System.Windows.Forms.MenuItem("设置...");
+            System.Windows.Forms.MenuItem menuHelp = new System.Windows.Forms.MenuItem("帮助...");
             menuSecretFunction = new System.Windows.Forms.MenuItem("开始展示");
             System.Windows.Forms.MenuItem menuAbout = new System.Windows.Forms.MenuItem("关于...");
             System.Windows.Forms.MenuItem menuExit = new System.Windows.Forms.MenuItem("退出");
@@ -503,12 +508,13 @@ namespace DanMu
             menuStop.Click += new EventHandler(stop_Click);
             menuHide.Click += new EventHandler(hide_Click);
             menuSetting.Click += new EventHandler(setting_Click);
+            menuHelp.Click += new EventHandler(help_Click);
             menuSecretFunction.Click += new EventHandler(secretFunction_Click);
             menuAbout.Click += new EventHandler(about_Click);
             menuExit.Click += new EventHandler(exit_Click);
 
             System.Windows.Forms.MenuItem[] children = new System.Windows.Forms.MenuItem[]{
-                menuDisplayRoomNum, menuStop, menuHide, menuSetting, menuSecretFunction, menuAbout, menuExit
+                menuDisplayRoomNum, menuStop, menuHide, menuSetting, menuHelp, menuSecretFunction, menuAbout, menuExit
             };
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(children);
 
@@ -541,7 +547,7 @@ namespace DanMu
         // 点击“显示房间号”时，在屏幕上显示房间号
         void display_Click(object sender, EventArgs e) {
             if (textBlockRoomNum.Visibility == Visibility.Collapsed) {
-                textBlockRoomNum.Text = "房间号：";
+                textBlockRoomNum.Text = "房间号："+setting.getRoomId();
                 textBlockRoomNum.Visibility = Visibility.Visible;
                 displayRoomNumTimer.Start();
                 menuDisplayRoomNum.Text = "隐藏房间号";
@@ -611,15 +617,35 @@ namespace DanMu
 
         // 点击“设置…”时，打开设置窗口
         public void setting_Click(object sender, EventArgs e) {
-            UserSetting userSetting = new UserSetting();
-            userSetting.settingChangeEvent += new UserSetting.settingChangeDelegate(settingChangeFunction);
-            userSetting.Show();
+            if (userSetting == null || !userSetting.IsLoaded) {
+                userSetting = new UserSetting();
+                userSetting.settingChangeEvent += new UserSetting.settingChangeDelegate(settingChangeFunction);
+                userSetting.Show();
+            }
+            else {
+                userSetting.Activate();
+            }
         }
 
+        // 点击“帮助…”时，打开帮助窗口
+        public void help_Click(object sender, EventArgs e) {
+            if (helpWindow == null || !helpWindow.IsLoaded) {
+                helpWindow = new Help();
+                helpWindow.Show();
+            }
+            else {
+                helpWindow.Activate();
+            }
+        }
         // 点击“关于…”时，打开关于窗口
         void about_Click(object sender, EventArgs e) {
-            AboutWindow aboutWindow = new AboutWindow();
-            aboutWindow.Show();
+            if (aboutWindow == null || !aboutWindow.IsLoaded) {
+                aboutWindow = new AboutWindow();
+                aboutWindow.Show();
+            }
+            else {
+                aboutWindow.Activate();
+            }
         }
 
         // 点击“退出”时，触发Close事件
@@ -773,6 +799,15 @@ namespace DanMu
                     menuStop.Dispose();
                 if(notifyIcon != null)
                     notifyIcon.Dispose();
+                if(userSetting != null) {
+                    userSetting.Close();
+                }
+                if(helpWindow != null) {
+                    helpWindow.Close();
+                }
+                if(aboutWindow != null) {
+                    aboutWindow.Close();
+                }
             }
         }
     }

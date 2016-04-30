@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DanMu"
         mc:Ignorable="d"
-        Title="登录-弹幕派" Height="320" Width="320">
+        Title="登录-弹幕派" Height="320" Width="320"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        KeyDown="LoginWindow_KeyDown">
     <Grid>
-        <Label x:Name="labelAccount" Content="账号" 
-               HorizontalAlignment="Left" Margin="71,119,0,0" 
-               VerticalAlignment="Top" Width="40" ToolTip="账号"/>
+        <Label x:Name="labelAccount" Content="账号" Height="30" Width="40" 
+               Margin="71,119,203,142"/>
         <TextBox x:Name="textBoxAccount" HorizontalAlignment="Left" 
-                 Height="20" Margin="119,123,0,0" 
+                 Height="20" Margin="119,123,0,0" TextChanged="TextBoxAccount_TextChanged"
                  TextWrapping="NoWrap" VerticalAlignment="Top" Width="120" TabIndex="1" ToolTip="账号"/>
         <Label x:Name="labelPassword" Content="密码" 
                HorizontalAlignment="Left" Margin="71,165,0,0" 
@@ -19,10 +20,12 @@
         <PasswordBox x:Name="passwordBox" 
                      Height="20"
                      HorizontalAlignment="Left" Margin="119,169,0,0" 
-                     VerticalAlignment="Top" Width="120" TabIndex="2" ToolTip="请输入密码"/>
+                     VerticalAlignment="Top" Width="120" TabIndex="2" ToolTip="请输入密码"
+                     PasswordChanged="PasswordBox_PasswordChanged"/>
         <Button x:Name="buttonOk" Content="登录" 
                 HorizontalAlignment="Left" Margin="71,215,0,0" 
                 VerticalAlignment="Top" Width="75"
+                IsEnabled="False"
                 Click="buttonOk_Click" TabIndex="3" ToolTip="登录"/>
         <Button x:Name="buttonCancel" Content="取消" 
                 HorizontalAlignment="Left" Margin="164,215,0,0" 
@@ -34,13 +37,14 @@
                Source="danmu.ico" ToolTip="云弹幕"/>
         <Label x:Name="labelBarCode"
                HorizontalAlignment="Left" Margin="121,256,0,0" 
-               VerticalAlignment="Top" Cursor="Hand" ToolTip="请使用微信扫描上面的二维码。">
+               VerticalAlignment="Top" Cursor="Hand" ToolTip="请使用微信扫描上面的二维码。" MouseEnter="LabelBarCode_MouseEnter" MouseLeave="LabelBarCode_MouseLeave">
             <TextBlock TextDecorations="Underline">查看二维码</TextBlock>
         </Label>
         <Image x:Name="imageBarCode" 
                HorizontalAlignment="Left" 
                Height="252" Margin="31,0,0,0" 
                VerticalAlignment="Top" Width="252"
+               Visibility="Collapsed"
                Source="barcode.jpg" ToolTip="请使用微信功能扫描。"/>
     </Grid>
 </Window>
