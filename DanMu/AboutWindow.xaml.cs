@@ -20,14 +20,20 @@ namespace DanMu
     public partial class AboutWindow : Window
     {
         public AboutWindow() {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            ResizeMode = ResizeMode.NoResize;
-
             InitializeComponent();
         }
+        private void hyperlinkMainSite_Click(object sender, RoutedEventArgs e) {
+            System.Diagnostics.Process.Start("http://danmu.zhengzi.me");
+        }
+        private void hyperlinkGitHub_Click(object sender, RoutedEventArgs e) {
+            System.Diagnostics.Process.Start("https://github.com/Project-Danmu");
+        }
+        private void hyperlinkMailTo_Click(object sender, RoutedEventArgs e) {
+            System.Diagnostics.Process.Start("mailto:thesharing@163.com?subject=弹幕派使用反馈-版本号v1.2.0");  
+        }
 
-        private void hyperlink_Click(object sender, RoutedEventArgs e) {
-            System.Diagnostics.Process.Start("https://github.com/Project-Danmu");  
+        private void ButtonOk_Click(object sender, RoutedEventArgs e) {
+            this.Close();
         }
     }
 }

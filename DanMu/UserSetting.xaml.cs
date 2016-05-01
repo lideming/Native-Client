@@ -166,9 +166,12 @@ namespace DanMu
             checkBoxFontStyle.IsChecked = false;
             checkBoxFontWeight.IsChecked = false;
 
-            textBoxNum.Text = "20";
-            textBoxDuration.Text = "100";
+            textBoxNum.Text = "40";
+            textBoxDuration.Text = "50";
             textBoxSpeed.Text = "2";
+
+            checkBoxRandomColor.IsChecked = false;
+            checkBoxRandomFontFamily.IsChecked = false;
         }
 
         private void checkBoxRandomColor_Checked(object sender, RoutedEventArgs e) {

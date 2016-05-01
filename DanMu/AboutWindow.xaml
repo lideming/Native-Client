@@ -5,19 +5,78 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DanMu"
         mc:Ignorable="d"
-        Title="关于" Height="300" Width="300">
+        Title="关于" Height="600" Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
     <Grid>
-        <Canvas>
-            <Image x:Name="imageLogo" Height="100" 
-                   Canvas.Left="94" Canvas.Top="10" 
-                   Width="100"
-                   Source="danmu.ico"/>
-            <Label x:Name="labelTitle" Content="云弹幕" Canvas.Left="106" Canvas.Top="115" FontSize="21.333"/>
-            <Label x:Name="labelSite"  Canvas.Left="96" Canvas.Top="179">
-                <Hyperlink Name="hyperlink" Click="hyperlink_Click" NavigateUri="https://github.com/Project-Danmu">View on Github
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Image Grid.Row="0" Source="BarBKG.jpg" Stretch="Fill" />
+        <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   Content="关于" FontSize="24" Foreground="#f2c12e"/>
+        <Image Grid.Row="1" Height="100" Canvas.Left="150" Canvas.Top="106" 
+                   Width="100" Source="logo.png"/>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   x:Name="labelTitle" Content="弹幕派" FontSize="24"/>
+            <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   x:Name="labelVersion" Content="v1.2.0" FontSize="18"/>
+        </Grid>
+        <TextBlock Grid.Row="3" TextAlignment="Center" VerticalAlignment="Center" LineHeight="20">
+                弹幕派 (Danmaku Pie)，为你的演示提供弹幕功能
+                <LineBreak />
+                基于 Windows Presentation Foundation(WPF) 开发
+                <LineBreak />
+                <LineBreak />
+                Add-On小组：边子政，洪志龙
+        </TextBlock>
+        <TextBlock Grid.Row="4" TextAlignment="Center" VerticalAlignment="Center" LineHeight="20">
+                All rights reserved.
+                <LineBreak />
+                Using Json.Net © 2016 Newtonsoft
+                <LineBreak />
+                "Key" Icon Created by Pedro Martínez from Noun Project
+        </TextBlock>
+        <Grid Grid.Row="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   x:Name="labelMainSite"  Canvas.Left="138" Canvas.Top="519">
+                <Hyperlink Name="hyperlinkMain" Click="hyperlinkMainSite_Click" NavigateUri="https://github.com/Project-Danmu">
+                    访问弹幕派官方网站
                 </Hyperlink>
             </Label>
-
-        </Canvas>
+            <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   x:Name="labelGitHub">
+                <Hyperlink Name="hyperlinkGitHub" Click="hyperlinkGitHub_Click" NavigateUri="https://github.com/Project-Danmu">
+                    在GitHub上了解我们
+                </Hyperlink>
+            </Label>
+            <Label Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   x:Name="labelMailTo">
+                <Hyperlink Name="hyperlinkMailTo" Click="hyperlinkMailTo_Click" NavigateUri="https://github.com/Project-Danmu">
+                    通过邮件反馈意见
+                </Hyperlink>
+            </Label>
+        </Grid>
+        <Button x:Name="ButtonOk" Grid.Row="6" Width="100" Height="25"
+                VerticalAlignment="Center" HorizontalAlignment="Center"
+                Click="ButtonOk_Click">
+            确定
+        </Button>
     </Grid>
 </Window>

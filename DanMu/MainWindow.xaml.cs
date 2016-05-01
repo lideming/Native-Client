@@ -62,7 +62,11 @@ namespace DanMu
         private Help helpWindow = null;
         private AboutWindow aboutWindow = null;
 
-        class fetchedData
+        private int nowScreen = 0;
+
+        System.Windows.Forms.Screen[] sc = System.Windows.Forms.Screen.AllScreens;
+
+        public class fetchedData
             // 用于存储从网络获取的弹幕内容
         {
             public int num;
@@ -480,10 +484,15 @@ namespace DanMu
             }
         }
 
+
+
+
         System.Windows.Forms.MenuItem menuStop;
         System.Windows.Forms.MenuItem menuDisplayRoomNum;
         System.Windows.Forms.MenuItem menuHide;
         System.Windows.Forms.MenuItem menuSecretFunction;
+        System.Windows.Forms.MenuItem menuScreen;
+        System.Windows.Forms.MenuItem[] childrenOfScreen;
 
         /// <summary>
         /// 初始化系统托盘
@@ -513,11 +522,23 @@ namespace DanMu
             menuAbout.Click += new EventHandler(about_Click);
             menuExit.Click += new EventHandler(exit_Click);
 
+            childrenOfScreen = new System.Windows.Forms.MenuItem[sc.Length];
+            for(int i = 0; i < sc.Length; i++) {
+                childrenOfScreen[i] = new System.Windows.Forms.MenuItem("显示器 " + i.ToString());
+                childrenOfScreen[i].Click += screen_Click;
+                if (sc[i].Primary) {
+                    nowScreen = i;
+                    childrenOfScreen[i].Checked = true;
+                    childrenOfScreen[i].Enabled = false;
+                }
+            }
+            menuScreen = new System.Windows.Forms.MenuItem("选择显示器");
+            menuScreen.MenuItems.AddRange(childrenOfScreen);
+
             System.Windows.Forms.MenuItem[] children = new System.Windows.Forms.MenuItem[]{
-                menuDisplayRoomNum, menuStop, menuHide, menuSetting, menuHelp, menuSecretFunction, menuAbout, menuExit
+                menuDisplayRoomNum, menuStop, menuHide, new System.Windows.Forms.MenuItem("-"), menuSetting, menuScreen, new System.Windows.Forms.MenuItem("-"), menuHelp,  menuAbout, menuExit
             };
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(children);
-
             this.StateChanged += new EventHandler(Systray_StateChanged);
         }
 
@@ -651,6 +672,32 @@ namespace DanMu
         // 点击“退出”时，触发Close事件
         void exit_Click(object sender, EventArgs e) {
             this.Close();
+        }
+
+        void screen_Click(object sender, EventArgs e) {
+            try {
+                System.Windows.Forms.MenuItem selectMenuItem = (System.Windows.Forms.MenuItem)sender;
+                int screenID = int.Parse(selectMenuItem.Text.Substring(4));
+                if(sc.Length > screenID && sc[screenID] != null) {
+                    this.WindowState = WindowState.Minimized;
+                    this.Top = sc[screenID].Bounds.Top;
+                    this.Left = sc[screenID].Bounds.Left;
+       
+                    screenHeight = sc[screenID].Bounds.Height;
+                    screenWidth = sc[screenID].Bounds.Width;
+                    textBlockRoomNum.Margin = new Thickness(screenWidth / 2 - 200, screenHeight / 2 - 20,
+                screenWidth / 2 - 200, screenHeight / 2 - 20);
+                    childrenOfScreen[nowScreen].Checked = false;
+                    childrenOfScreen[nowScreen].Enabled = true;
+                    nowScreen = screenID;
+                    childrenOfScreen[screenID].Checked = true;
+                    childrenOfScreen[screenID].Enabled = false;
+                    this.WindowState = WindowState.Maximized;
+                }
+            }
+            catch {
+                Debug.WriteLine("Fatal Error.");
+            }
         }
 
         // 当窗口状态变化（最小化）时
@@ -807,6 +854,11 @@ namespace DanMu
                 }
                 if(aboutWindow != null) {
                     aboutWindow.Close();
+                }
+                if(childrenOfScreen != null && childrenOfScreen.Length!=0) {
+                    for(int i = 0;i < childrenOfScreen.Length; i++) {
+                        childrenOfScreen[i].Dispose();
+                    }
                 }
             }
         }

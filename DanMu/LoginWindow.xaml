@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DanMu"
         mc:Ignorable="d"
-        Title="登录-弹幕派" Height="320" Width="320"
+        Title="登录" Height="320" Width="320"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         KeyDown="LoginWindow_KeyDown">
     <Grid>
@@ -32,9 +32,9 @@
                 VerticalAlignment="Top" Width="75"
                 Click="buttonCancel_Click" TabIndex="4" ToolTip="退出"/>
         <Image x:Name="imageLogo" HorizontalAlignment="Left" 
-               Height="75" Margin="120,27,0,0" 
-               VerticalAlignment="Top" Width="75"
-               Source="danmu.ico" ToolTip="云弹幕"/>
+               Height="100"
+               VerticalAlignment="Top" Width="100"
+               Source="logo.png" ToolTip="云弹幕" Margin="105,14,0,0"/>
         <Label x:Name="labelBarCode"
                HorizontalAlignment="Left" Margin="121,256,0,0" 
                VerticalAlignment="Top" Cursor="Hand" ToolTip="请使用微信扫描上面的二维码。" MouseEnter="LabelBarCode_MouseEnter" MouseLeave="LabelBarCode_MouseLeave">

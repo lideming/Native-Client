@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="弹幕派" Height="766" Width="1366"
         WindowStyle="None" Background="#00FFFFFF" AllowsTransparency="True"
-        Topmost="True" WindowState="Maximized"
+        Topmost="True" WindowState="Maximized" WindowStartupLocation="Manual"
         Closing="Window_Closing" Loaded="Window_Loaded">
     <Window.Resources>
         <RoutedUICommand x:Key="Stop" Text="Stop Danmaku" />
