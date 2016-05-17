@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
+using System.Windows.Media.Imaging;
 
 namespace DanMu
 {
@@ -40,6 +41,7 @@ namespace DanMu
         private Timer getWebContentTimer = null; // 从网络获取数据的超时计时器
         private Timer displayRoomNumTimer = null; // 显示房间号的超时计时器
         private Timer secretFunctionTimer = null;
+        private Timer displayRoomNumViaDanmuTimer = null;
 
         private BackgroundWorker fetchBW = new BackgroundWorker(); // 后台获取网络数据的后台进程
 
@@ -162,7 +164,9 @@ namespace DanMu
             textBlockRoomNum.Margin = new Thickness(screenWidth / 2 - 200, screenHeight / 2 - 20, 
                 screenWidth / 2 - 200, screenHeight / 2 - 20);
             textBlockRoomNum.Visibility = Visibility.Collapsed;
-            
+
+            imageBarcode.Visibility = Visibility.Hidden;
+
             // 设置各计时器的属性
             mainTimer = new System.Timers.Timer();
             mainTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
@@ -183,6 +187,10 @@ namespace DanMu
             secretFunctionTimer.Interval = 10000;
             secretFunctionTimer.AutoReset = true;
 
+            displayRoomNumViaDanmuTimer = new Timer();
+            displayRoomNumViaDanmuTimer.Elapsed += new ElapsedEventHandler(displayTimeOut);
+            displayRoomNumViaDanmuTimer.Interval = 10000;
+            displayRoomNumViaDanmuTimer.AutoReset = true;
             // 主计时器开始计时
             mainTimer.Start();
         }
@@ -493,6 +501,8 @@ namespace DanMu
         System.Windows.Forms.MenuItem menuSecretFunction;
         System.Windows.Forms.MenuItem menuScreen;
         System.Windows.Forms.MenuItem[] childrenOfScreen;
+        System.Windows.Forms.MenuItem menuDisplay;
+        System.Windows.Forms.MenuItem[] childrenOfMenuDisplay;
 
         /// <summary>
         /// 初始化系统托盘
@@ -507,13 +517,18 @@ namespace DanMu
             menuDisplayRoomNum = new System.Windows.Forms.MenuItem("显示房间号");
             menuStop = new System.Windows.Forms.MenuItem("暂停");
             menuHide = new System.Windows.Forms.MenuItem("隐藏至托盘");
+            menuDisplay = new System.Windows.Forms.MenuItem("展示模式");
+            childrenOfMenuDisplay = new System.Windows.Forms.MenuItem[2];
+            childrenOfMenuDisplay[0] = new System.Windows.Forms.MenuItem("通过弹幕显示房间号");
+            childrenOfMenuDisplay[1] = new System.Windows.Forms.MenuItem("显示公众号二维码");
+            menuDisplay.MenuItems.AddRange(childrenOfMenuDisplay);
             System.Windows.Forms.MenuItem menuSetting = new System.Windows.Forms.MenuItem("设置...");
             System.Windows.Forms.MenuItem menuHelp = new System.Windows.Forms.MenuItem("帮助...");
             menuSecretFunction = new System.Windows.Forms.MenuItem("开始展示");
             System.Windows.Forms.MenuItem menuAbout = new System.Windows.Forms.MenuItem("关于...");
             System.Windows.Forms.MenuItem menuExit = new System.Windows.Forms.MenuItem("退出");
 
-            menuDisplayRoomNum.Click += new EventHandler(display_Click);
+            menuDisplayRoomNum.Click += new EventHandler(displayRoomNum_Click);
             menuStop.Click += new EventHandler(stop_Click);
             menuHide.Click += new EventHandler(hide_Click);
             menuSetting.Click += new EventHandler(setting_Click);
@@ -521,6 +536,11 @@ namespace DanMu
             menuSecretFunction.Click += new EventHandler(secretFunction_Click);
             menuAbout.Click += new EventHandler(about_Click);
             menuExit.Click += new EventHandler(exit_Click);
+
+            childrenOfMenuDisplay[0].Click += new EventHandler(displayRoomNumViaDanmu_Click);
+            childrenOfMenuDisplay[0].Checked = false;
+            childrenOfMenuDisplay[1].Click += new EventHandler(displayBarcode_Click);
+            childrenOfMenuDisplay[1].Checked = false;
 
             childrenOfScreen = new System.Windows.Forms.MenuItem[sc.Length];
             for(int i = 0; i < sc.Length; i++) {
@@ -536,7 +556,7 @@ namespace DanMu
             menuScreen.MenuItems.AddRange(childrenOfScreen);
 
             System.Windows.Forms.MenuItem[] children = new System.Windows.Forms.MenuItem[]{
-                menuDisplayRoomNum, menuStop, menuHide, new System.Windows.Forms.MenuItem("-"), menuSetting, menuScreen, new System.Windows.Forms.MenuItem("-"), menuHelp,  menuAbout, menuExit
+                menuDisplayRoomNum, menuStop, menuHide, menuDisplay, new System.Windows.Forms.MenuItem("-"), menuSetting, menuScreen, new System.Windows.Forms.MenuItem("-"), menuHelp,  menuAbout, menuExit
             };
             notifyIcon.ContextMenu = new System.Windows.Forms.ContextMenu(children);
             this.StateChanged += new EventHandler(Systray_StateChanged);
@@ -566,7 +586,7 @@ namespace DanMu
         }
 
         // 点击“显示房间号”时，在屏幕上显示房间号
-        void display_Click(object sender, EventArgs e) {
+        void displayRoomNum_Click(object sender, EventArgs e) {
             if (textBlockRoomNum.Visibility == Visibility.Collapsed) {
                 textBlockRoomNum.Text = "房间号："+setting.getRoomId();
                 textBlockRoomNum.Visibility = Visibility.Visible;
@@ -792,6 +812,32 @@ namespace DanMu
                 menuSecretFunction.Text = "开始展示";
                 System.Windows.MessageBox.Show("File Not Found，Secret Function Initialization Failed.", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+        }
+
+        void displayTimeOut(object sender, EventArgs e) {
+            danmuStorage.Add("房间号" + setting.getRoomId());
+        }
+
+        void displayRoomNumViaDanmu_Click(object sender, EventArgs e) {
+            if (displayRoomNumViaDanmuTimer.Enabled) {
+                displayRoomNumViaDanmuTimer.Stop();
+                childrenOfMenuDisplay[0].Checked = false;
+            }
+            else {
+                displayRoomNumViaDanmuTimer.Start();
+                childrenOfMenuDisplay[0].Checked = true;
+            }
+        }
+        
+        void displayBarcode_Click(object sender, EventArgs e) {
+            if (childrenOfMenuDisplay[1].Checked) {
+                imageBarcode.Visibility= Visibility.Hidden;
+                childrenOfMenuDisplay[1].Checked = false;
+            }
+            else {
+                imageBarcode.Visibility = Visibility.Visible;
+                childrenOfMenuDisplay[1].Checked = true;
             }
         }
 

@@ -20,5 +20,7 @@
                         CanExecute="CommandBinding_CanExecute"
                         Executed="CommandBinding_Executed" />
     </Window.CommandBindings>
-    <Grid Name="grid" />
+    <Grid Name="grid" >
+        <Image x:Name="imageBarcode" Source="barcode.jpg" Height="200"  Width="200"/>
+    </Grid>
 </Window>
