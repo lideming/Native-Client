@@ -1,4 +1,4 @@
-# 弹幕派 v1.2.0
+# 弹幕派 v1.2.1
 
 ![Logo](http://7xr64j.com1.z0.glb.clouddn.com//danmu/logo.png)
 
@@ -8,7 +8,7 @@
 
 ### 下载地址
 
-[点击下载](http://7xr64j.com1.z0.glb.clouddn.com//danmu/release/Danmaku%20v1.2.0.zip)
+[点击下载](http://7xr64j.com1.z0.glb.clouddn.com//danmu/release/Danmaku%20v1.2.1.zip)
 
 ## 优点
 
@@ -58,6 +58,12 @@
 ## 版本说明
 
 如果您在使用过程中遇到问题，欢迎反馈到 thesharing@163.com。
+
+### v 1.2.1 更新
+
+* 增加了新菜单项——“展示模式”
+* 将房间号显示在弹幕中
+* 在演示时显示二维码
 
 ### v 1.2.0 更新
 
