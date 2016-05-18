@@ -31,7 +31,7 @@
             <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                    x:Name="labelTitle" Content="弹幕派" FontSize="24"/>
             <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
-                   x:Name="labelVersion" Content="v1.2.0" FontSize="18"/>
+                   x:Name="labelVersion" Content="v1.2.2" FontSize="18"/>
         </Grid>
         <TextBlock Grid.Row="3" TextAlignment="Center" VerticalAlignment="Center" LineHeight="20">
                 弹幕派 (Danmaku Pie)，为你的演示提供弹幕功能

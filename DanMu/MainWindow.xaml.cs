@@ -851,8 +851,7 @@ namespace DanMu
             }
             else {
                 e.CanExecute = true;
-            }
-            
+            }  
         }
 
         private void CommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e) {
