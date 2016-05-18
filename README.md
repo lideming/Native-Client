@@ -1,4 +1,4 @@
-# 弹幕派 v1.2.1
+# 弹幕派 v1.2.2
 
 ![Logo](http://7xr64j.com1.z0.glb.clouddn.com//danmu/logo.png)
 
@@ -8,7 +8,7 @@
 
 ### 下载地址
 
-[点击下载](http://7xr64j.com1.z0.glb.clouddn.com//danmu/release/Danmaku%20v1.2.1.zip)
+[点击下载](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmaku%20v1.2.2.zip)
 
 ## 优点
 
