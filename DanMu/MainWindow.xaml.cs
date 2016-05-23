@@ -9,10 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Windows.Media;
-using System.IO;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
-using System.Windows.Media.Imaging;
 
 namespace DanMu
 {
@@ -29,25 +27,24 @@ namespace DanMu
                                                                        //为了保证获取速度，先后台获取多条弹幕，然后缓存起来
 
         Boolean hasDisplayedBalloonTip = false; // 是否已经显示过气泡提示
-        // 气泡提示用于第一次最小化时提示用户软件被最小化至系统托盘
-        Boolean [] isExist = new Boolean[NUM]; // 用于显示对应Textblock是否对应的有弹幕
+                                                // 气泡提示用于第一次最小化时提示用户软件被最小化至系统托盘
+        Boolean [] isExist = new Boolean[NUM];  // 用于显示对应Textblock是否对应的有弹幕
+        int[] danmuNumInTrack;
         Boolean isStop = false; // 是否被停止
-        Boolean isDemo = false;
 
-        double textHeight = 10;
+        int textHeight = 10;
+        int trackNum = 0;
 
         int time = setting.getDURATION() -1; // 时间片，用于计算弹幕获取间隔，起始时间设置为间隔-1，方便一运行就出弹幕
-        private System.Timers.Timer mainTimer = null; // 主计时器
-        private Timer getWebContentTimer = null; // 从网络获取数据的超时计时器
-        private Timer displayRoomNumTimer = null; // 显示房间号的超时计时器
-        private Timer secretFunctionTimer = null;
+
+        private System.Timers.Timer mainTimer = null;   // 主计时器
+        private Timer getWebContentTimer = null;        // 从网络获取数据的超时计时器
+        private Timer displayRoomNumTimer = null;       // 显示房间号的超时计时器
         private Timer displayRoomNumViaDanmuTimer = null;
 
         private BackgroundWorker fetchBW = new BackgroundWorker(); // 后台获取网络数据的后台进程
 
         private delegate void DispatcherDelegateTimer(); // UI更新函数
-        // 使用：this.Dispatcher.Invoke(DispatcherPriority.Normal,new DispatcherDelegateTimer(UpdateUI));
-        // private delegate void DispatcherDelegateFetchWebContent(int num); //
 
         private System.Windows.Forms.NotifyIcon notifyIcon; // 托盘图标
         private TextBlock textBlockRoomNum; // 显示房间号的TextBlock
@@ -57,8 +54,6 @@ namespace DanMu
         private List<string> fontFamilyList = new List<string>();
 
         private Random ran = new Random(100);
-
-        private StreamReader fillingTextSR;
 
         private UserSetting userSetting = null;
         private Help helpWindow = null;
@@ -94,7 +89,8 @@ namespace DanMu
             InitialTray();
 
             // 尝试从 setting.ini 中恢复设置
-            RestoreSetting();
+            setting.RestoreSetting();
+
             FormattedText formattedText = new FormattedText(
                 "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor",
                 CultureInfo.GetCultureInfo("en-us"),
@@ -102,14 +98,11 @@ namespace DanMu
                 new Typeface(setting.getFontFamily().ToString()),
                 setting.getFontSize(),
                 setting.getForeground());
-            textHeight = formattedText.Height;
-
-            try {
-                string settingFilePath = System.Windows.Forms.Application.StartupPath + "\\fillingText.txt";
-                fillingTextSR = new StreamReader(settingFilePath, Encoding.Default);
-            }
-            catch {
-                Debug.WriteLine("Can't Find FillingText.txt.");
+            textHeight = (int)formattedText.Height;
+            trackNum = (int)(screenHeight / textHeight);
+            danmuNumInTrack = new int[trackNum+1];
+            for(int i =0;i <= trackNum; i++) {
+                danmuNumInTrack[i] = -1;
             }
 
             foreach (FontFamily _f in Fonts.SystemFontFamilies) {
@@ -182,11 +175,6 @@ namespace DanMu
             displayRoomNumTimer.Interval = 10000;
             displayRoomNumTimer.AutoReset = false;
 
-            secretFunctionTimer = new Timer();
-            secretFunctionTimer.Elapsed += new ElapsedEventHandler(secretFunction);
-            secretFunctionTimer.Interval = 10000;
-            secretFunctionTimer.AutoReset = true;
-
             displayRoomNumViaDanmuTimer = new Timer();
             displayRoomNumViaDanmuTimer.Elapsed += new ElapsedEventHandler(displayTimeOut);
             displayRoomNumViaDanmuTimer.Interval = 10000;
@@ -195,14 +183,10 @@ namespace DanMu
             mainTimer.Start();
         }
 
-
-
-
         /// <summary>
         /// 主计时器负责唤醒UpdateUI
         /// </summary>
         private void OnTimedEvent(object sender, EventArgs e){
-            // displayRoomNumTimer.Elapsed += new ElapsedEventHandler(displayRoomNumTimeOut);
             this.Dispatcher.Invoke(DispatcherPriority.Normal,new DispatcherDelegateTimer(UpdateUI));
         }
 
@@ -221,18 +205,14 @@ namespace DanMu
 
             // 对isExist进行遍历
             for (int i = 0; i < NUM; i++) { 
-                if (isExist[i] == true) { // 如果说有弹幕，就把弹幕移动一下，当移出屏幕时将弹幕删除
-                    TextBlock textTemp = grid.FindName("textBlockDanmu"+i.ToString()) as TextBlock;
-                    if (textTemp != null) {
-                        //先移动弹幕
-                        textTemp.Margin = new Thickness(textTemp.Margin.Left - setting.getSPEED(),
-                            textTemp.Margin.Top, textTemp.Margin.Right + setting.getSPEED(), textTemp.Margin.Bottom);
-                        if (textTemp.Margin.Left < -1600) {
-                            //如果移出屏幕了，就把这个弹幕移除
-                            RemoveText(i);
-                        }// if (textTemp.Margin.Left < -1600)
-                    }// if (textTemp != null)
-                }// if (isExist[i] == true)
+                if (isExist[i] == true && textBlockDanmu[i] != null) { // 如果说有弹幕，就把弹幕移动一下，当移出屏幕时将弹幕删除
+                    textBlockDanmu[i].Margin = new Thickness(textBlockDanmu[i].Margin.Left - setting.getSPEED(),
+                        textBlockDanmu[i].Margin.Top, textBlockDanmu[i].Margin.Right + setting.getSPEED(),
+                        textBlockDanmu[i].Margin.Bottom);//先移动弹幕
+                    if (textBlockDanmu[i].Margin.Right > screenWidth) {
+                        RemoveText(i);//如果移出屏幕了，就把这个弹幕移除
+                    }
+                }
                 else {
                     if (isTime == true) {
                         // 从网络获取弹幕
@@ -254,9 +234,21 @@ namespace DanMu
                     textBlockDanmu[num].Text = danmuStorage[0];
                     danmuStorage.RemoveAt(0);
                     //设置对齐方式
-                    int randomNumber = ran.Next(0, (int)(screenHeight / textHeight));
-                    int RandKey = randomNumber * (int)textHeight;//(0, ((int)screenHeight - 10));
-                    textBlockDanmu[num].Margin = new Thickness(0, RandKey, 0, 0); //LEFT TOP RIGHT BOTTOM
+                    int randomNumber = 0;
+                    while (true) {
+                        randomNumber = ran.Next(0, trackNum);
+                        if (danmuNumInTrack[randomNumber] > 0) {
+                            if (isExist[danmuNumInTrack[randomNumber]]) {
+                                if (textBlockDanmu[danmuNumInTrack[randomNumber]].Margin.Right <
+                                    textBlockDanmu[danmuNumInTrack[randomNumber]].ActualWidth + textBlockDanmu[num].ActualWidth)
+                                    continue;
+                            }
+                        }
+                        break;
+                    }
+                    danmuNumInTrack[randomNumber] = num;
+                    int danmakuHeight = randomNumber * textHeight;
+                    textBlockDanmu[num].Margin = new Thickness(0, danmakuHeight, 0, 0); //LEFT TOP RIGHT BOTTOM
                     if (setting.getRandomColor()) {
                         Color foregroundColor = (Color)ColorConverter.ConvertFromString(colorList[ran.Next(0,colorList.Count)]);
                         textBlockDanmu[num].Foreground = new SolidColorBrush(foregroundColor); 
@@ -271,13 +263,9 @@ namespace DanMu
                         getWebContentTimer.Start();
                         fetchBW.RunWorkerAsync();
                     }
-                    //this.Dispatcher.BeginInvoke(DispatcherPriority.Input, new DispatcherDelegateFetchWebContent(this.updateText), i);
                 }
             }
         }
-
-        
-
 
         /// <summary>
         /// DoWrok开始从后台获取弹幕内容
@@ -377,132 +365,24 @@ namespace DanMu
             Debug.WriteLine("Time Out When Get Web Content.");
         }
 
-
-
         /// <summary>
         /// 移除弹幕，将isExist[i]设为false
         /// </summary>
         /// <param name="num"></param>
         private void RemoveText(int num) {
-            TextBlock textTemp = grid.FindName("textBlockDanmu"+num.ToString()) as TextBlock;
-            if (textTemp != null) {
-                textTemp.Text = "";
+            if (textBlockDanmu[num] != null) {
+                textBlockDanmu[num].Text = "";
                 isExist[num] = false;
             }
-            isExist[num] = false;
         }
 
-
-
-        /// <summary>
-        /// 从本地setting.ini恢复设置
-        /// </summary>
-        private void RestoreSetting() {
-            try {
-                string settingFilePath = System.Windows.Forms.Application.StartupPath + "\\setting.ini";
-                StreamReader settingFileSR = new StreamReader(settingFilePath, Encoding.UTF8);
-                settingFileSR.ReadLine();
-                string str = settingFileSR.ReadLine();
-                str = str.Substring("Num = ".Length, str.Length - "Num = ".Length);
-                setting.setNUM(Int32.Parse(str));
-                str = settingFileSR.ReadLine();
-                str = str.Substring("Duration = ".Length, str.Length - "Duration = ".Length);
-                setting.setDURATION(Int32.Parse(str));
-                str = settingFileSR.ReadLine();
-                str = str.Substring("Speed = ".Length, str.Length - "Speed = ".Length);
-                setting.setSPEED(Int32.Parse(str));
-                str = settingFileSR.ReadLine();
-                str = settingFileSR.ReadLine();
-                str = str.Substring("Background = ".Length, str.Length - "Background = ".Length);
-                setting.setBackground(str);
-                str = settingFileSR.ReadLine();
-                str = str.Substring("Foreground = ".Length, str.Length - "Foreground = ".Length);
-                setting.setForeground(str);
-                str = settingFileSR.ReadLine();
-                str = str.Substring("FontFamily = ".Length, str.Length - "FontFamily = ".Length);
-                setting.setFontFamily(str);
-                str = settingFileSR.ReadLine();
-                str = str.Substring("FontStyle = ".Length, str.Length - "FontStyle = ".Length);
-                if(str == "Italic") {
-                    setting.setFontStyle(FontStyles.Italic);
-                }
-                else {
-                    setting.setFontStyle(FontStyles.Normal);
-                }
-                str = settingFileSR.ReadLine();
-                str = str.Substring("FontWeight = ".Length, str.Length - "FontWeight = ".Length);
-                if(str == "Bold") {
-                    setting.setFontWeight(FontWeights.Bold);
-                }
-                else {
-                    setting.setFontWeight(FontWeights.Normal);
-                }
-                str = settingFileSR.ReadLine();
-                str = str.Substring("FontSize = ".Length, str.Length - "FontSize = ".Length);
-                setting.setFontSize(Int32.Parse(str));
-                str = settingFileSR.ReadLine();
-                str = str.Substring("Opactity = ".Length, str.Length - "Opactity = ".Length);
-                setting.setOpactity(Double.Parse(str));
-                str = settingFileSR.ReadLine();
-                str = str.Substring("Random Color = ".Length, str.Length - "Random Color = ".Length);
-                if(str == "True") {
-                    setting.setRandomColor(true);
-                }
-                else {
-                    setting.setRandomColor(false);
-                }
-                str = settingFileSR.ReadLine();
-                str = str.Substring("Random FontFamily = ".Length, str.Length - "Random FontFamily = ".Length);
-                if (str == "True") {
-                    setting.setRandomFontFamily(true);
-                }
-                else {
-                    setting.setRandomFontFamily(false);
-                }
-                settingFileSR.Close();
-            }
-            catch (FileNotFoundException e) {
-                System.Windows.MessageBox.Show("未找到配置文件，将默认初始化。", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-                setting.SaveSetting();
-            }
-            catch(FormatException e) {
-                System.Windows.MessageBox.Show("配置文件中存在格式错误。", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-            }
-            catch(OverflowException e) {
-                System.Windows.MessageBox.Show("配置文件中存在参数错误。", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-            }
-            catch(IOException e) {
-                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-            }
-            catch(NullReferenceException e) {
-                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-            }
-            catch(ArgumentOutOfRangeException e) {
-                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-            }
-            catch{
-                System.Windows.MessageBox.Show("Fatal Error.", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-            }
-        }
-
-
-
-
-        System.Windows.Forms.MenuItem menuStop;
+        System.Windows.Forms.MenuItem menuDisplay;
         System.Windows.Forms.MenuItem menuDisplayRoomNum;
         System.Windows.Forms.MenuItem menuHide;
-        System.Windows.Forms.MenuItem menuSecretFunction;
         System.Windows.Forms.MenuItem menuScreen;
-        System.Windows.Forms.MenuItem[] childrenOfScreen;
-        System.Windows.Forms.MenuItem menuDisplay;
+        System.Windows.Forms.MenuItem menuStop;
         System.Windows.Forms.MenuItem[] childrenOfMenuDisplay;
+        System.Windows.Forms.MenuItem[] childrenOfScreen;
 
         /// <summary>
         /// 初始化系统托盘
@@ -524,7 +404,6 @@ namespace DanMu
             menuDisplay.MenuItems.AddRange(childrenOfMenuDisplay);
             System.Windows.Forms.MenuItem menuSetting = new System.Windows.Forms.MenuItem("设置...");
             System.Windows.Forms.MenuItem menuHelp = new System.Windows.Forms.MenuItem("帮助...");
-            menuSecretFunction = new System.Windows.Forms.MenuItem("开始展示");
             System.Windows.Forms.MenuItem menuAbout = new System.Windows.Forms.MenuItem("关于...");
             System.Windows.Forms.MenuItem menuExit = new System.Windows.Forms.MenuItem("退出");
 
@@ -533,7 +412,6 @@ namespace DanMu
             menuHide.Click += new EventHandler(hide_Click);
             menuSetting.Click += new EventHandler(setting_Click);
             menuHelp.Click += new EventHandler(help_Click);
-            menuSecretFunction.Click += new EventHandler(secretFunction_Click);
             menuAbout.Click += new EventHandler(about_Click);
             menuExit.Click += new EventHandler(exit_Click);
 
@@ -735,8 +613,6 @@ namespace DanMu
         private void Window_Closing(object sender, CancelEventArgs e) {
             if (System.Windows.MessageBox.Show("退出弹幕派？", "弹幕派", 
                 MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {
-                if(fillingTextSR!=null)
-                    fillingTextSR.Close();
                 notifyIcon.Dispose();
                 System.Windows.Application.Current.Shutdown();
             }
@@ -744,9 +620,6 @@ namespace DanMu
                 e.Cancel = true;
             }
         }
-
-
-
 
         /// <summary>
         /// 当用户设置完成时，重新渲染所有内容
@@ -776,50 +649,14 @@ namespace DanMu
                 new Typeface(setting.getFontFamily().ToString()),
                 setting.getFontSize(),
                 setting.getForeground());
-            textHeight = formattedText.Height;
+            textHeight = (int)formattedText.Height;
         }
 
-        void secretFunction_Click(object sender, EventArgs e) {
-            if (isDemo) {
-                menuSecretFunction.Text = "开始展示";
-                isDemo = false;
-                secretFunctionTimer.Stop();
-                danmuStorage.Clear();
-            }
-            else {
-                menuSecretFunction.Text = "结束演示";
-                isDemo = true;
-                secretFunctionTimer.Interval = (NUM-1) * setting.getDURATION();
-                secretFunctionTimer.Start();
-            }
-        }
-
-        void secretFunction(object sender, EventArgs e) {
-            try {        
-                while(danmuStorage.Count<= NUM) {
-                    if (fillingTextSR.Peek() >= 0) {
-                        danmuStorage.Add(fillingTextSR.ReadLine());
-                    }
-                    else {
-                        fillingTextSR.BaseStream.Seek(0, SeekOrigin.Begin);
-                        fillingTextSR.DiscardBufferedData();
-                    }
-                }
-            }
-            catch {
-                secretFunctionTimer.Stop();
-                isDemo = false;
-                menuSecretFunction.Text = "开始展示";
-                System.Windows.MessageBox.Show("File Not Found，Secret Function Initialization Failed.", "弹幕派",
-                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-            }
-        }
-
-        void displayTimeOut(object sender, EventArgs e) {
+        private void displayTimeOut(object sender, EventArgs e) {
             danmuStorage.Add("房间号" + setting.getRoomId());
         }
 
-        void displayRoomNumViaDanmu_Click(object sender, EventArgs e) {
+        private void displayRoomNumViaDanmu_Click(object sender, EventArgs e) {
             if (displayRoomNumViaDanmuTimer.Enabled) {
                 displayRoomNumViaDanmuTimer.Stop();
                 childrenOfMenuDisplay[0].Checked = false;
@@ -830,7 +667,7 @@ namespace DanMu
             }
         }
         
-        void displayBarcode_Click(object sender, EventArgs e) {
+        private void displayBarcode_Click(object sender, EventArgs e) {
             if (childrenOfMenuDisplay[1].Checked) {
                 imageBarcode.Visibility= Visibility.Hidden;
                 childrenOfMenuDisplay[1].Checked = false;
@@ -869,41 +706,52 @@ namespace DanMu
 
         protected virtual void Dispose(bool disposing) {
             if (disposing) {
-                if(displayRoomNumTimer!=null)
-                    displayRoomNumTimer.Close();
-                if(fetchBW!=null)
+                if (fetchBW != null)
                     fetchBW.Dispose();
-                if (fillingTextSR != null)
-                    fillingTextSR.Close();
-                if(getWebContentTimer!=null)
+
+                if (displayRoomNumTimer != null)
+                    displayRoomNumTimer.Close();
+                if (getWebContentTimer != null)
                     getWebContentTimer.Close();
-                if(secretFunctionTimer!=null)
-                    secretFunctionTimer.Close();
-                if(mainTimer!=null)
+                if (mainTimer != null)
                     mainTimer.Close();
-                if(menuDisplayRoomNum!=null)
+                if (displayRoomNumViaDanmuTimer != null)
+                    displayRoomNumViaDanmuTimer.Close();
+
+                if (menuDisplay != null)
+                    menuDisplay.Dispose();
+                if (menuDisplayRoomNum != null)
                     menuDisplayRoomNum.Dispose();
-                if(menuHide!=null)
+                if (menuHide != null)
                     menuHide.Dispose();
-                if(menuSecretFunction!=null)
-                    menuSecretFunction.Dispose();
-                if(menuStop!=null)
+                if (menuScreen != null)
+                    menuScreen.Dispose();
+                if (menuStop != null)
                     menuStop.Dispose();
-                if(notifyIcon != null)
+
+                if(childrenOfMenuDisplay != null && childrenOfMenuDisplay.Length != 0) {
+                    for (int i = 0; i < childrenOfMenuDisplay.Length; i++) {
+                        childrenOfMenuDisplay[i].Dispose();
+                    }
+                }
+                if (childrenOfScreen != null && childrenOfScreen.Length != 0) {
+                    for (int i = 0; i < childrenOfScreen.Length; i++) {
+                        childrenOfScreen[i].Dispose();
+                    }
+                }
+
+                if (notifyIcon != null)
                     notifyIcon.Dispose();
+
                 if(userSetting != null) {
                     userSetting.Close();
                 }
+
                 if(helpWindow != null) {
                     helpWindow.Close();
                 }
                 if(aboutWindow != null) {
                     aboutWindow.Close();
-                }
-                if(childrenOfScreen != null && childrenOfScreen.Length!=0) {
-                    for(int i = 0;i < childrenOfScreen.Length; i++) {
-                        childrenOfScreen[i].Dispose();
-                    }
                 }
             }
         }

@@ -6,26 +6,49 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Microsoft.Win32;
+using System.ComponentModel;
+using System;
+using System.Timers;
+using WpfAnimatedGif;
 
 namespace DanMu
 {
     /// <summary>
     /// LoginWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class LoginWindow : Window
+    public partial class LoginWindow : Window, IDisposable
     {
+        private BackgroundWorker loginBW = new BackgroundWorker(); // 后台获取网络数据的后台进程
+        private Timer loginTimer = null;
+
+        private string accountText;
+        private string passwordText;
+
         public LoginWindow() {
-            if(RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
+            if (RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
                 OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4.0\") == null) {
                 this.Close();
             }
 
             InitializeComponent();
+
+            loginBW.WorkerReportsProgress = true;
+            loginBW.WorkerSupportsCancellation = true;
+            loginBW.DoWork += new DoWorkEventHandler(LoginBW_DoWork);
+            loginBW.ProgressChanged += new ProgressChangedEventHandler(LoginBW_ProgressChanged);
+            loginBW.RunWorkerCompleted += new RunWorkerCompletedEventHandler(LoginBW_RunWorkerCompleted);
+
+            loginTimer = new Timer();
+            loginTimer.Elapsed += new ElapsedEventHandler(LoginTimeOut);
+            loginTimer.Interval = 15000;
+            loginTimer.AutoReset = false;
+
+            imageLoading.IsEnabled = false;
         }
 
         private void LoginWindow_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) {
-                Login();
+                buttonOk_Click(this, null);
             }
         }
 
@@ -57,46 +80,50 @@ namespace DanMu
         }
 
         private void buttonOk_Click(object sender, RoutedEventArgs e) {
-            Login();
+            this.buttonOk.IsEnabled = false;
+            this.buttonOk.Content = "登录中";
+            imageLoading.IsEnabled = true;
+            imageLoading.Visibility = Visibility.Visible;
+            accountText = textBoxAccount.Text;
+            passwordText = passwordBox.Password;
+            loginTimer.Start();
+            loginBW.RunWorkerAsync();
         }
 
-        private void Login() {
+        private bool Login() {
             string nameMD5;
             string passwordMD5;
             using (MD5 md5Hash = MD5.Create()) {
-                nameMD5 = account.GetMd5Hash(md5Hash, textBoxAccount.Text);
-                passwordMD5 = account.GetMd5Hash(md5Hash, passwordBox.Password);
+                nameMD5 = account.GetMd5Hash(md5Hash, accountText);
+                passwordMD5 = account.GetMd5Hash(md5Hash, passwordText);
                 Debug.WriteLine("Account: " + nameMD5);
                 Debug.WriteLine("Password: " + passwordMD5);
             }
 
             try {
                 using (WebClient client = new WebClient()) {
-                    byte[] buffer = client.DownloadData("http://danmu.zhengzi.me/controller/desktop.php?user=" + textBoxAccount.Text + "&hashPass=" + passwordMD5 + "&func=checkUsr");
+                    byte[] buffer = client.DownloadData("http://danmu.zhengzi.me/controller/desktop.php?user=" + accountText + "&hashPass=" + passwordMD5 + "&func=checkUsr");
                     string str = Encoding.GetEncoding("UTF-8").GetString(buffer, 0, buffer.Length);
                     if (str == "true") {
-                        account.name = textBoxAccount.Text;
-                        account.password = passwordBox.Password;
+                        account.name = accountText;
+                        account.password = passwordText;
                         account.nameMD5 = nameMD5;
                         account.passwordMD5 = passwordMD5;
                         Debug.WriteLine("Login Success.");
-                        byte[] buffer2 =  client.DownloadData("http://danmu.zhengzi.me/controller/desktop.php?user=" + textBoxAccount.Text + "&hashPass=" + passwordMD5 + "&func=getRoomId");
+                        byte[] buffer2 = client.DownloadData("http://danmu.zhengzi.me/controller/desktop.php?user=" + accountText + "&hashPass=" + passwordMD5 + "&func=getRoomId");
                         string str2 = Encoding.GetEncoding("UTF-8").GetString(buffer2, 0, buffer2.Length);
                         if (str2 == "false") {
                             System.Windows.MessageBox.Show("未注册房间，请扫描二维码进入官网进行注册。", "登录失败",
                                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
-                            return;
                         }
                         else {
                             if (str2.Length > 2)
-                                setting.setRoomId(str2.Substring(1,str2.Length-2));
-                        }
-                        System.Windows.MessageBox.Show("登录成功。", "弹幕派",
+                                setting.setRoomId(str2.Substring(1, str2.Length - 2));
+                            System.Windows.MessageBox.Show("登录成功。", "弹幕派",
                                 MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
-                        // 获取房间号
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.Show();
-                        this.Close();
+                            // 获取房间号
+                            return true;
+                        }
                     }
                     else {
                         try {
@@ -124,11 +151,60 @@ namespace DanMu
                 System.Windows.MessageBox.Show("未连接到网络，请检查网络设置。", "登录失败",
                     MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
             }
+            return false;
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e) {
             this.Close();
         }
 
+        private void LoginBW_DoWork(Object sender, DoWorkEventArgs e) {
+            BackgroundWorker backgroundWorker = sender as BackgroundWorker;
+            e.Result = Login();
+            backgroundWorker.ReportProgress(100);
+        }
+
+        private void LoginBW_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+            return;
+        }
+
+        private void LoginBW_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            buttonOk.IsEnabled = true;
+            buttonOk.Content = "登录";
+            loginTimer.Stop();
+            imageLoading.Visibility = Visibility.Collapsed;
+            imageLoading.IsEnabled = false;
+            bool result = (bool)e.Result;
+            if (e.Cancelled == false && e.Error == null && result) {
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+                this.Close();
+            }
+        }
+
+        private void LoginTimeOut(object sender, EventArgs e) {
+            loginBW.CancelAsync();
+            Debug.WriteLine("Time Out When Login In.");
+            System.Windows.MessageBox.Show("登录超时，请重试。", "登录失败",
+                                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+        }
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~LoginWindow() {
+            Dispose(false);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (disposing) {
+                if (loginBW != null)
+                    loginBW.Dispose();
+                if (loginTimer != null)
+                    loginTimer.Dispose();
+            }
+        }
     }
 }

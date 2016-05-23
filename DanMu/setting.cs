@@ -4,13 +4,14 @@ using System.Windows.Media;
 using System.IO;
 using System.Security.Permissions;
 using System.Security;
+using System.Text;
 
 namespace DanMu
 {
     class setting
     {
-        private static int NUM = 20; //弹幕数量
-        private static int DURATION = 100; //弹幕获取间隔
+        private static int NUM = 40; //弹幕数量
+        private static int DURATION = 40; //弹幕获取间隔
         private static int SPEED = 2; //弹幕移动速度
         private static Brush background = Brushes.Transparent;
         private static Brush foreground = Brushes.Black;
@@ -19,8 +20,8 @@ namespace DanMu
         private static FontWeight fontWeight = FontWeights.Normal;
         private static double fontSize = 36;
         private static double opactity = 1; // (Between 0.0-1.0)
-        private static bool randomColor = false;
-        private static bool randomFontFamily = false;
+        private static bool randomColor = true;
+        private static bool randomFontFamily = true;
         private static string roomID;
 
         public static int getNUM() { return NUM; }
@@ -36,7 +37,6 @@ namespace DanMu
         public static double getOpactity() { return opactity; }
         public static bool getRandomColor() { return randomColor; }
         public static bool getRandomFontFamily (){ return randomFontFamily; }
-
         public static string getRoomId() { return roomID; }
 
 
@@ -101,6 +101,104 @@ namespace DanMu
             if(fs!=null)
                 fs.Close();
             return false;
+        }
+
+        /// <summary>
+        /// 从本地setting.ini恢复设置
+        /// </summary>
+        public static void RestoreSetting() {
+            try {
+                string settingFilePath = System.Windows.Forms.Application.StartupPath + "\\setting.ini";
+                StreamReader settingFileSR = new StreamReader(settingFilePath, Encoding.UTF8);
+                settingFileSR.ReadLine();
+                string str = settingFileSR.ReadLine();
+                str = str.Substring("Num = ".Length, str.Length - "Num = ".Length);
+                setting.setNUM(Int32.Parse(str));
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Duration = ".Length, str.Length - "Duration = ".Length);
+                setting.setDURATION(Int32.Parse(str));
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Speed = ".Length, str.Length - "Speed = ".Length);
+                setting.setSPEED(Int32.Parse(str));
+                str = settingFileSR.ReadLine();
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Background = ".Length, str.Length - "Background = ".Length);
+                setting.setBackground(str);
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Foreground = ".Length, str.Length - "Foreground = ".Length);
+                setting.setForeground(str);
+                str = settingFileSR.ReadLine();
+                str = str.Substring("FontFamily = ".Length, str.Length - "FontFamily = ".Length);
+                setting.setFontFamily(str);
+                str = settingFileSR.ReadLine();
+                str = str.Substring("FontStyle = ".Length, str.Length - "FontStyle = ".Length);
+                if (str == "Italic") {
+                    setting.setFontStyle(FontStyles.Italic);
+                }
+                else {
+                    setting.setFontStyle(FontStyles.Normal);
+                }
+                str = settingFileSR.ReadLine();
+                str = str.Substring("FontWeight = ".Length, str.Length - "FontWeight = ".Length);
+                if (str == "Bold") {
+                    setting.setFontWeight(FontWeights.Bold);
+                }
+                else {
+                    setting.setFontWeight(FontWeights.Normal);
+                }
+                str = settingFileSR.ReadLine();
+                str = str.Substring("FontSize = ".Length, str.Length - "FontSize = ".Length);
+                setting.setFontSize(Int32.Parse(str));
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Opactity = ".Length, str.Length - "Opactity = ".Length);
+                setting.setOpactity(Double.Parse(str));
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Random Color = ".Length, str.Length - "Random Color = ".Length);
+                if (str == "True") {
+                    setting.setRandomColor(true);
+                }
+                else {
+                    setting.setRandomColor(false);
+                }
+                str = settingFileSR.ReadLine();
+                str = str.Substring("Random FontFamily = ".Length, str.Length - "Random FontFamily = ".Length);
+                if (str == "True") {
+                    setting.setRandomFontFamily(true);
+                }
+                else {
+                    setting.setRandomFontFamily(false);
+                }
+                settingFileSR.Close();
+            }
+            catch (FileNotFoundException e) {
+                System.Windows.MessageBox.Show("未找到配置文件，将默认初始化。", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                setting.SaveSetting();
+            }
+            catch (FormatException e) {
+                System.Windows.MessageBox.Show("配置文件中存在格式错误。", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+            catch (OverflowException e) {
+                System.Windows.MessageBox.Show("配置文件中存在参数错误。", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+            catch (IOException e) {
+                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+            catch (NullReferenceException e) {
+                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+            catch (ArgumentOutOfRangeException e) {
+                System.Windows.MessageBox.Show("配置文件存在错误。", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
+            catch {
+                System.Windows.MessageBox.Show("Fatal Error.", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+            }
         }
     }
 }
