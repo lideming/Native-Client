@@ -48,7 +48,7 @@ namespace DanmakuPie
                         updateInfo.Desc = root.Element("Description").Value;
                         updateInfo.MD5 = Guid.NewGuid();
                         memoryStream.Close();
-                        if (!CheckUpdateInfo(updateInfo)) {
+                        if (CheckUpdateInfo(updateInfo)) {
                             System.Windows.MessageBox.Show("现在是最新版本 v"+ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "。", "弹幕派",
                                 MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
                             this.Close();
@@ -67,10 +67,10 @@ namespace DanmakuPie
 
         public bool CheckUpdateInfo(UpdateInfo updateInfo) {
             if (updateInfo.UpdateMode == "UpdateToMin")
-                if (updateInfo.RequiredMinVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version < updateInfo.RequiredMinVersion)
+                if (updateInfo.RequiredMinVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version >= updateInfo.RequiredMinVersion)
                     return true;
             if (updateInfo.UpdateMode == "UpdateToNew")
-                if (updateInfo.AppVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version < updateInfo.AppVersion)
+                if (updateInfo.AppVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version >= updateInfo.AppVersion)
                     return true;
             return false;
         }

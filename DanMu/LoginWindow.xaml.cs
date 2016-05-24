@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using System.Security.Permissions;
 using System.Security;
 using System.Threading;
+using System.Reflection;
 
 namespace DanmakuPie
 {
@@ -245,10 +246,10 @@ namespace DanmakuPie
 
         public void CheckUpdateInfo(UpdateInfo updateInfo) {
             if(updateInfo.UpdateMode == "UpdateToMin")
-                if (updateInfo.RequiredMinVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version > updateInfo.RequiredMinVersion)
+                if (updateInfo.RequiredMinVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version >= updateInfo.RequiredMinVersion)
                     return;
             if (updateInfo.UpdateMode == "UpdateToNew")
-                if (updateInfo.AppVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version > updateInfo.AppVersion)
+                if (updateInfo.AppVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version >= updateInfo.AppVersion)
                     return;
             Thread t = new Thread(new ThreadStart(() => {
                 Dispatcher.BeginInvoke(new Action(() => {

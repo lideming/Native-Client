@@ -28,8 +28,8 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>1.2.0.2</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.4.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -116,8 +116,11 @@
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="account.cs" />
-    <Compile Include="Dialog.xaml.cs">
-      <DependentUpon>Dialog.xaml</DependentUpon>
+    <Compile Include="ConfirmDialog.xaml.cs">
+      <DependentUpon>ConfirmDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MessageDialog.xaml.cs">
+      <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Help.xaml.cs">
       <DependentUpon>Help.xaml</DependentUpon>
@@ -139,7 +142,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialog.xaml">
+    <Page Include="ConfirmDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MessageDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -237,6 +244,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="danmu.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Picture\Icon\Done.png" />
+    <Resource Include="Picture\Icon\Error.png" />
+    <Resource Include="Picture\Icon\Info.png" />
+    <Resource Include="Picture\Icon\Warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Picture\Icon\Question.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
