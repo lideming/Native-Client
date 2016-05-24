@@ -14,9 +14,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="1.3*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="0.6*" />
         </Grid.RowDefinitions>
         <Image Grid.Row="0" Source="Picture/BarBKG.jpg" Stretch="Fill" />
         <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" 
@@ -38,13 +38,16 @@
                 <LineBreak />
                 基于 Windows Presentation Foundation(WPF) 开发
                 <LineBreak />
-                <LineBreak />
                 Add-On小组：边子政，洪志龙
         </TextBlock>
         <TextBlock Grid.Row="4" TextAlignment="Center" VerticalAlignment="Center" LineHeight="20">
                 All rights reserved.
                 <LineBreak />
                 Using Json.Net © 2016 Newtonsoft
+                <LineBreak />
+                Using SharpZipLib by icsharpcode
+                <LineBreak />
+                Using WPFAnimatedGIF by thomaslevesque
                 <LineBreak />
                 "Key" Icon Created by Pedro Martínez from Noun Project
         </TextBlock>

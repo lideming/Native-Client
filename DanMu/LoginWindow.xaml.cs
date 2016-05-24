@@ -50,7 +50,7 @@ namespace DanmakuPie
             loginTimer.AutoReset = false;
 
             imageLoading.IsEnabled = false;
-            CheckUpdate();
+            //CheckUpdate();
         }
 
         private void LoginWindow_KeyDown(object sender, KeyEventArgs e) {

@@ -621,10 +621,8 @@ namespace DanmakuPie
 
         // 当退出时，进行问询
         private void Window_Closing(object sender, CancelEventArgs e) {
-            /*if (System.Windows.MessageBox.Show("退出弹幕派？", "弹幕派", 
-                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {*/
-            ConfirmDialog dialog = new ConfirmDialog("弹幕派", "退出弹幕派？", "Question");
-            if (dialog.ShowDialog()==true) {
+            if (System.Windows.MessageBox.Show("退出弹幕派？", "弹幕派", 
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes) {
                 notifyIcon.Dispose();
                 System.Windows.Application.Current.Shutdown();
             }
