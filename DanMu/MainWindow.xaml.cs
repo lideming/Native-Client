@@ -12,7 +12,7 @@ using System.Windows.Media;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
 
-namespace DanMu
+namespace DanmakuPie
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -583,6 +583,16 @@ namespace DanMu
        
                     screenHeight = sc[screenID].Bounds.Height;
                     screenWidth = sc[screenID].Bounds.Width;
+                    trackNum = (int)screenHeight / textHeight;
+                    int[] newDanmuNumInTrack = new int[trackNum];
+                    for(int i = 0; i < Math.Min(danmuNumInTrack.Length, trackNum); i++) {
+                        newDanmuNumInTrack[i] = danmuNumInTrack[i]; 
+                    }
+                    if(danmuNumInTrack.Length < trackNum) {
+                        for (int i = danmuNumInTrack.Length; i < trackNum; i++)
+                            newDanmuNumInTrack[i] = -1;
+                    }
+                    danmuNumInTrack = newDanmuNumInTrack;
                     textBlockRoomNum.Margin = new Thickness(screenWidth / 2 - 200, screenHeight / 2 - 20,
                 screenWidth / 2 - 200, screenHeight / 2 - 20);
                     childrenOfScreen[nowScreen].Checked = false;

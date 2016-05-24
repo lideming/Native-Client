@@ -1,0 +1,36 @@
+﻿<Window x:Class="DanmakuPie.Dialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DanmakuPie"
+        mc:Ignorable="d"
+        Title="Dialog" Height="300" Width="400"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Image x:Name="icon" Grid.Column="0" 
+                   Source="Picture/Danmu.ico" Height="80" Width="80"/>
+            <TextBlock x:Name="text" Grid.Column="1" VerticalAlignment="Center" Margin="20"
+                       Text="提示" FontSize="20"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="3" x:Name="buttonOk"
+                    Content="确定" Margin="10 15"
+                    Click="buttonOk_Click"/>
+        </Grid>
+    </Grid>
+</Window>

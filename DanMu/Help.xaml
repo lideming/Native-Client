@@ -1,9 +1,9 @@
-﻿<Window x:Class="DanMu.Help"
+﻿<Window x:Class="DanmakuPie.Help"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DanMu"
+        xmlns:local="clr-namespace:DanmakuPie"
         mc:Ignorable="d"
         Title="帮助" Height="500" Width="400" 
         WindowStartupLocation="CenterScreen"
@@ -15,7 +15,7 @@
             <RowDefinition Height="2*"/>
             <RowDefinition Height="0.5*"/>
         </Grid.RowDefinitions>
-        <Image Source="/BarBKG.jpg" Stretch="Fill"/>
+        <Image Source="Picture/BarBKG.jpg" Stretch="Fill"/>
         <TextBlock Text="帮助" Grid.Row="0" Foreground="#f2c12e"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    FontSize="24" Margin="15">
@@ -28,7 +28,7 @@
                     <ColumnDefinition Width="2.5*" />
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Image Source="/SPACE.png" Height="50" VerticalAlignment="Center" />
+                <Image Source="Picture/SPACE.png" Height="50" VerticalAlignment="Center" />
                 <TextBlock Text="暂停/继续播放弹幕" Grid.Column="2" 
                            FontSize="14"
                            VerticalAlignment="Center" HorizontalAlignment="Center" />
@@ -48,19 +48,19 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Image Source="/Ctrl.png" Height="50" VerticalAlignment="Center" />
+                <Image Source="Picture/Ctrl.png" Height="50" VerticalAlignment="Center" />
                 <TextBlock Text="+" Grid.Column="1" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="18"/>
-                <Image Source="/SPACE.png" Grid.Column="2" Height="50" VerticalAlignment="Center" />
+                <Image Source="Picture/SPACE.png" Grid.Column="2" Height="50" VerticalAlignment="Center" />
                 <TextBlock Text="暂停/继续播放弹幕" Grid.Column="3" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="14"/>
-                <Image Source="/Ctrl.png" Grid.Row="1" Height="50" VerticalAlignment="Center" />
+                <Image Source="Picture/Ctrl.png" Grid.Row="1" Height="50" VerticalAlignment="Center" />
                 <TextBlock Text="+" Grid.Row="1" Grid.Column="1" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="18"/>
-                <Image Source="/H.png" Grid.Row="1" Grid.Column="2" Height="50" VerticalAlignment="Center" />
+                <Image Source="Picture/H.png" Grid.Row="1" Grid.Column="2" Height="50" VerticalAlignment="Center" />
                 <TextBlock Text="隐藏/显示弹幕" Grid.Row="1" Grid.Column="3" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="14"/>

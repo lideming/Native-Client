@@ -6,7 +6,7 @@ using System.Security.Permissions;
 using System.Security;
 using System.Text;
 
-namespace DanMu
+namespace DanmakuPie
 {
     class setting
     {
@@ -62,12 +62,12 @@ namespace DanMu
 
         public static bool SaveSetting() {
             string settingFilePath = System.IO.Directory.GetCurrentDirectory() + "\\setting.ini";
-            FileIOPermission f = new FileIOPermission(FileIOPermissionAccess.Read, System.IO.Directory.GetCurrentDirectory());
+            FileIOPermission f = new FileIOPermission(FileIOPermissionAccess.Write, System.IO.Directory.GetCurrentDirectory());
             try {
                 f.Demand();
             }
             catch (SecurityException e) {
-                System.Windows.MessageBox.Show("文件夹权限错误，请检查UAC权限，无法保存设置。", "云弹幕",
+                System.Windows.MessageBox.Show("文件夹权限错误，请检查UAC权限，无法保存设置。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                 return false;
             }
@@ -107,6 +107,15 @@ namespace DanMu
         /// 从本地setting.ini恢复设置
         /// </summary>
         public static void RestoreSetting() {
+            FileIOPermission f = new FileIOPermission(FileIOPermissionAccess.Read, System.IO.Directory.GetCurrentDirectory());
+            try {
+                f.Demand();
+            }
+            catch (SecurityException e) {
+                System.Windows.MessageBox.Show("文件夹权限错误，请检查UAC权限，无法读取设置。", "弹幕派",
+                MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
+                return;
+            }
             try {
                 string settingFilePath = System.Windows.Forms.Application.StartupPath + "\\setting.ini";
                 StreamReader settingFileSR = new StreamReader(settingFilePath, Encoding.UTF8);

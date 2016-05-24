@@ -3,7 +3,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
-namespace DanMu
+namespace DanmakuPie
 {
     class account
     {

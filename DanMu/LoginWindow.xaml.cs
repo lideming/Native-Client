@@ -10,8 +10,13 @@ using System.ComponentModel;
 using System;
 using System.Timers;
 using WpfAnimatedGif;
+using System.IO;
+using System.Xml.Linq;
+using System.Security.Permissions;
+using System.Security;
+using System.Threading;
 
-namespace DanMu
+namespace DanmakuPie
 {
     /// <summary>
     /// LoginWindow.xaml 的交互逻辑
@@ -19,7 +24,7 @@ namespace DanMu
     public partial class LoginWindow : Window, IDisposable
     {
         private BackgroundWorker loginBW = new BackgroundWorker(); // 后台获取网络数据的后台进程
-        private Timer loginTimer = null;
+        private System.Timers.Timer loginTimer = null;
 
         private string accountText;
         private string passwordText;
@@ -38,12 +43,13 @@ namespace DanMu
             loginBW.ProgressChanged += new ProgressChangedEventHandler(LoginBW_ProgressChanged);
             loginBW.RunWorkerCompleted += new RunWorkerCompletedEventHandler(LoginBW_RunWorkerCompleted);
 
-            loginTimer = new Timer();
+            loginTimer = new System.Timers.Timer();
             loginTimer.Elapsed += new ElapsedEventHandler(LoginTimeOut);
             loginTimer.Interval = 15000;
             loginTimer.AutoReset = false;
 
             imageLoading.IsEnabled = false;
+            CheckUpdate();
         }
 
         private void LoginWindow_KeyDown(object sender, KeyEventArgs e) {
@@ -205,6 +211,53 @@ namespace DanMu
                 if (loginTimer != null)
                     loginTimer.Dispose();
             }
+        }
+
+        public void CheckUpdate() {
+            Debug.WriteLine("Start.");
+            System.Threading.ThreadPool.QueueUserWorkItem((s) =>
+            {
+                Debug.WriteLine("Checking Update.");
+                string url = "http://7xr64j.com1.z0.glb.clouddn.com/update2.xml";
+                var client = new System.Net.WebClient();
+                client.DownloadDataCompleted += (x, y) =>
+                {
+                    Debug.WriteLine("Download Completed.");
+                    if (y.Error == null) {
+                        MemoryStream memoryStream = new MemoryStream(y.Result);
+                        XDocument xDoc = XDocument.Load(memoryStream);
+                        UpdateInfo updateInfo = new UpdateInfo();
+                        XElement root = xDoc.Element("UpdateInfo");
+                        updateInfo.AppName = root.Element("AppName").Value;
+                        updateInfo.AppVersion = root.Element("AppVersion") == null ||
+                        string.IsNullOrEmpty(root.Element("AppVersion").Value) ? null : new Version(root.Element("AppVersion").Value);
+                        updateInfo.RequiredMinVersion = root.Element("RequiredMinVersion") == null || string.IsNullOrEmpty(root.Element("RequiredMinVersion").Value) ? null : new Version(root.Element("RequiredMinVersion").Value);
+                        updateInfo.UpdateMode = root.Element("UpdateMode").Value;
+                        updateInfo.Desc = root.Element("Description").Value;
+                        updateInfo.MD5 = Guid.NewGuid();
+                        memoryStream.Close();
+                        CheckUpdateInfo(updateInfo);
+                    }
+                };
+                client.DownloadDataAsync(new Uri(url));
+            });
+        }
+
+        public void CheckUpdateInfo(UpdateInfo updateInfo) {
+            if(updateInfo.UpdateMode == "UpdateToMin")
+                if (updateInfo.RequiredMinVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version > updateInfo.RequiredMinVersion)
+                    return;
+            if (updateInfo.UpdateMode == "UpdateToNew")
+                if (updateInfo.AppVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version > updateInfo.AppVersion)
+                    return;
+            Thread t = new Thread(new ThreadStart(() => {
+                Dispatcher.BeginInvoke(new Action(() => {
+                    UpdateWindow updateWindow = new UpdateWindow("UpdateAtStart", updateInfo);
+                    updateWindow.Show();
+                    this.Close();
+                }));
+            }));
+            t.Start();    
         }
     }
 }

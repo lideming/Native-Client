@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace DanMu
+namespace DanmakuPie
 {
     public class KeyboardHandler : IDisposable
     {

@@ -1,9 +1,9 @@
-﻿<Window x:Class="DanMu.MainWindow"
+﻿<Window x:Class="DanmakuPie.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DanMu"
+        xmlns:local="clr-namespace:DanmakuPie"
         mc:Ignorable="d"
         Title="弹幕派" Height="766" Width="1366"
         WindowStyle="None" Background="#00FFFFFF" AllowsTransparency="True"
@@ -21,6 +21,6 @@
                         Executed="CommandBinding_Executed" />
     </Window.CommandBindings>
     <Grid Name="grid" >
-        <Image x:Name="imageBarcode" Source="barcode.jpg" Height="200"  Width="200"/>
+        <Image x:Name="imageBarcode" Source="Picture/barcode.jpg" Height="200"  Width="200"/>
     </Grid>
 </Window>

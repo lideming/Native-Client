@@ -7,7 +7,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Windows;
 
-namespace DanMu
+namespace DanmakuPie
 {
     class Log : IDisposable
     {
@@ -20,12 +20,12 @@ namespace DanMu
                 Directory.CreateDirectory(System.IO.Directory.GetCurrentDirectory() + "\\Logs");
             }
             string settingFilePath = System.IO.Directory.GetCurrentDirectory() + "\\Logs\\"+DateTime.Now.ToString()+".log";
-            FileIOPermission f = new FileIOPermission(FileIOPermissionAccess.Read, System.IO.Directory.GetCurrentDirectory());
+            FileIOPermission f = new FileIOPermission(FileIOPermissionAccess.Write, System.IO.Directory.GetCurrentDirectory());
             try {
                 f.Demand();
             }
             catch (SecurityException e) {
-                System.Windows.MessageBox.Show("文件夹权限错误，请检查UAC权限，无法保存设置。", "云弹幕",
+                System.Windows.MessageBox.Show("文件夹权限错误，请检查UAC权限，无法保存设置。", "弹幕派",
                 MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                 isLogOpen = false;
                 return;

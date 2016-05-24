@@ -14,16 +14,16 @@ using System.Windows.Shapes;
 namespace DanmakuPie
 {
     /// <summary>
-    /// Help.xaml 的交互逻辑
+    /// Dialog.xaml 的交互逻辑
     /// </summary>
-    public partial class Help : Window
+    public partial class Dialog : Window
     {
-        public Help() {
+        public Dialog() {
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e) {
-            this.Close();
+        private void buttonOk_Click(object sender, RoutedEventArgs e) {
+
         }
     }
 }

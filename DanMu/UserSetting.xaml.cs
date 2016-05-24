@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace DanMu
+namespace DanmakuPie
 {
     /// <summary>
     /// UserSetting.xaml 的交互逻辑
