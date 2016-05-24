@@ -21,7 +21,7 @@
 ### 下载地址
 [GitHub下载](https://github.com/Project-Danmu/Native-Client/releases)
 
-[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmaku%20v1.3.0.zip)
+[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmakupie%20v1.3.0.zip)
 
 [百度云](http://pan.baidu.com/s/1c17zLgk)
 
