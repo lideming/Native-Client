@@ -47,7 +47,6 @@ namespace DanmakuPie
         private delegate void DispatcherDelegateTimer(); // UI更新函数
 
         private System.Windows.Forms.NotifyIcon notifyIcon; // 托盘图标
-        private TextBlock textBlockRoomNum; // 显示房间号的TextBlock
         private List<TextBlock> textBlockDanmu = new List<TextBlock>();
 
         private List<string> colorList = new List<string>();
@@ -87,6 +86,9 @@ namespace DanmakuPie
 
             // 初始化系统托盘图标
             InitialTray();
+
+            notifyIcon.BalloonTipText = "登录成功，弹幕派正在运行。";
+            notifyIcon.ShowBalloonTip(500);
 
             // 尝试从 setting.ini 中恢复设置
             setting.RestoreSetting();
@@ -146,19 +148,8 @@ namespace DanmakuPie
             }
 
             // 初始化房间号textBlockRoomNum
-            textBlockRoomNum = new TextBlock();
-            textBlockRoomNum.Text = "房间号：";
-            textBlockRoomNum.HorizontalAlignment = HorizontalAlignment.Center;
-            textBlockRoomNum.Foreground = Brushes.Black;
-            textBlockRoomNum.Background = new SolidColorBrush(Color.FromArgb(255,242,193,46));
-            textBlockRoomNum.FontSize = 36;
-            grid.Children.Add(textBlockRoomNum);
-            grid.RegisterName("textblockRoomNum",textBlockRoomNum);
             textBlockRoomNum.Margin = new Thickness(screenWidth / 2 - 200, screenHeight / 2 - 20, 
                 screenWidth / 2 - 200, screenHeight / 2 - 20);
-            textBlockRoomNum.Visibility = Visibility.Collapsed;
-
-            imageBarcode.Visibility = Visibility.Hidden;
 
             // 设置各计时器的属性
             mainTimer = new System.Timers.Timer();

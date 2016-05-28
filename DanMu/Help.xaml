@@ -7,65 +7,91 @@
         mc:Ignorable="d"
         Title="帮助" Height="500" Width="400" 
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        WindowStyle="None">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.5*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="2*"/>
-            <RowDefinition Height="0.5*"/>
-        </Grid.RowDefinitions>
-        <Image Source="Picture/BarBKG.jpg" Stretch="Fill"/>
-        <TextBlock Text="帮助" Grid.Row="0" Foreground="#f2c12e"
-                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                   FontSize="24" Margin="15">
-        </TextBlock>
-        <GroupBox Header="快捷键" Grid.Row="1"
-                  HorizontalAlignment="Left" VerticalAlignment="Top" 
-                  Height="102" Width="364" Margin="10,10,0,0" >
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*" />
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <Image Source="Picture/SPACE.png" Height="50" VerticalAlignment="Center" />
-                <TextBlock Text="暂停/继续播放弹幕" Grid.Column="2" 
-                           FontSize="14"
-                           VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </Grid>
-        </GroupBox>
-        <GroupBox Header="全局快捷键" Grid.Row="2"
-                  HorizontalAlignment="Left" VerticalAlignment="Top" 
-                  Height="220" Width="364" Margin="10,10,0,0" >
+        <Border BorderThickness="1" BorderBrush="#f2c12e" >
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="0.7*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="1.9*"/>
+                    <RowDefinition Height="0.4*"/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="0.5*" />
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <Image Source="Picture/Ctrl.png" Height="50" VerticalAlignment="Center" />
-                <TextBlock Text="+" Grid.Column="1" 
+                <Image Source="Picture/BarBKG.jpg" Stretch="Fill"
+                       MouseMove="Image_MouseMove"/>
+                <Button x:Name="buttonClose" Height="20" Width="20" Margin="358,10,20,32" 
+                        Background="Transparent" BorderBrush="Transparent" Click="buttonClose_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Image Source="Picture/Icon/CloseIcon.png"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="buttonMinimize" Height="20" Width="20" Margin="328,10,50,32"
+                        Background="Transparent" BorderBrush="Transparent" Click="buttonMinimize_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Image Source="Picture/Icon/MinimizeIcon.png"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <TextBlock Text="帮助" Grid.Row="0" Foreground="#f2c12e"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   FontSize="24" Margin="15">
+                </TextBlock>
+                <GroupBox Header="快捷键" Grid.Row="1"
+                  HorizontalAlignment="Left" VerticalAlignment="Top" 
+                  Height="102" Width="364" Margin="10,10,0,0" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2.5*" />
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Picture/SPACE.png" Height="50" VerticalAlignment="Center" />
+                        <TextBlock Text="暂停/继续播放弹幕" Grid.Column="2" 
+                           FontSize="14"
+                           VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox Header="全局快捷键" Grid.Row="2"
+                  HorizontalAlignment="Left" VerticalAlignment="Top" 
+                  Height="220" Width="364" Margin="10,10,0,0" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Source="Picture/Ctrl.png" Height="50" VerticalAlignment="Center" />
+                        <TextBlock Text="+" Grid.Column="1" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="18"/>
-                <Image Source="Picture/SPACE.png" Grid.Column="2" Height="50" VerticalAlignment="Center" />
-                <TextBlock Text="暂停/继续播放弹幕" Grid.Column="3" 
+                        <Image Source="Picture/SPACE.png" Grid.Column="2" Height="50" VerticalAlignment="Center" />
+                        <TextBlock Text="暂停/继续播放弹幕" Grid.Column="3" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="14"/>
-                <Image Source="Picture/Ctrl.png" Grid.Row="1" Height="50" VerticalAlignment="Center" />
-                <TextBlock Text="+" Grid.Row="1" Grid.Column="1" 
+                        <Image Source="Picture/Ctrl.png" Grid.Row="1" Height="50" VerticalAlignment="Center" />
+                        <TextBlock Text="+" Grid.Row="1" Grid.Column="1" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="18"/>
-                <Image Source="Picture/H.png" Grid.Row="1" Grid.Column="2" Height="50" VerticalAlignment="Center" />
-                <TextBlock Text="隐藏/显示弹幕" Grid.Row="1" Grid.Column="3" 
+                        <Image Source="Picture/H.png" Grid.Row="1" Grid.Column="2" Height="50" VerticalAlignment="Center" />
+                        <TextBlock Text="隐藏/显示弹幕" Grid.Row="1" Grid.Column="3" 
                            HorizontalAlignment="Center" VerticalAlignment="Center" 
                            FontSize="14"/>
+                    </Grid>
+                </GroupBox>
+                <Button Grid.Row="3" Height="25" Width="80" 
+                        VerticalAlignment="Center" HorizontalAlignment="Right" 
+                        Margin="150,0,150,10" 
+                        Style="{StaticResource functionButton}"
+                        Click="Button_Click">确定</Button>
             </Grid>
-        </GroupBox>
-        <Button Grid.Row="3" Height="25" Width="80" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="150,15,150,15" Click="Button_Click">确定</Button>
+        </Border>
     </Grid>
 </Window>

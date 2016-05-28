@@ -86,9 +86,10 @@ namespace DanmakuPie
             imageBarCode.Visibility = Visibility.Collapsed;
         }
 
-        private void buttonOk_Click(object sender, RoutedEventArgs e) {
+        private void buttonOk_Click(object sender, RoutedEventArgs e) { 
             this.buttonOk.IsEnabled = false;
             this.buttonOk.Content = "登录中";
+            textBlockBlank.Visibility = Visibility.Visible;
             imageLoading.IsEnabled = true;
             imageLoading.Visibility = Visibility.Visible;
             accountText = textBoxAccount.Text;
@@ -126,9 +127,7 @@ namespace DanmakuPie
                         else {
                             if (str2.Length > 2)
                                 setting.setRoomId(str2.Substring(1, str2.Length - 2));
-                            System.Windows.MessageBox.Show("登录成功。", "弹幕派",
-                                MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
-                            // 获取房间号
+                            loginTimer.Stop();
                             return true;
                         }
                     }
@@ -181,6 +180,7 @@ namespace DanmakuPie
             loginTimer.Stop();
             imageLoading.Visibility = Visibility.Collapsed;
             imageLoading.IsEnabled = false;
+            textBlockBlank.Visibility = Visibility.Collapsed;
             bool result = (bool)e.Result;
             if (e.Cancelled == false && e.Error == null && result) {
                 MainWindow mainWindow = new MainWindow();
@@ -259,6 +259,14 @@ namespace DanmakuPie
                 }));
             }));
             t.Start();    
+        }
+
+        private void buttonClose_Click(object sender, RoutedEventArgs e) {
+            this.Close();
+        }
+
+        private void buttonMinimize_Click(object sender, RoutedEventArgs e) {
+            this.WindowState = WindowState.Minimized;
         }
     }
 }

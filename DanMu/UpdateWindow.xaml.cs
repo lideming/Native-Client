@@ -16,6 +16,10 @@ namespace DanmakuPie
     public partial class UpdateWindow : Window
     {
         private UpdateInfo updateInfo = null;
+
+        public UpdateWindow() {
+            InitializeComponent();
+        }
         public UpdateWindow(string mode, UpdateInfo updateInfo) {
             if(mode == "UpdateManually") {
                 CheckUpdate();
@@ -183,6 +187,20 @@ namespace DanmakuPie
                     zf.IsStreamOwner = true; // Makes close also shut the underlying stream
                     zf.Close(); // Ensure we release resources
                 }
+            }
+        }
+
+        private void buttonClose_Click(object sender, RoutedEventArgs e) {
+            this.Close();
+        }
+
+        private void buttonMinimize_Click(object sender, RoutedEventArgs e) {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void Image_MouseMove(object sender, System.Windows.Input.MouseEventArgs e) {
+            if(e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) {
+                this.DragMove();
             }
         }
     }

@@ -3,54 +3,79 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:DanmakuPie"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="登录" Height="320" Width="320"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        WindowStyle="None"
         KeyDown="LoginWindow_KeyDown">
     <Grid>
-        <Label x:Name="labelAccount" Content="账号" Height="30" Width="40" 
-               Margin="71,119,203,142"/>
-        <TextBox x:Name="textBoxAccount" HorizontalAlignment="Left" 
-                 Height="20" Margin="119,123,0,0" TextChanged="TextBoxAccount_TextChanged"
-                 TextWrapping="NoWrap" VerticalAlignment="Top" Width="120" TabIndex="1" ToolTip="账号"/>
-        <Label x:Name="labelPassword" Content="密码" 
-               HorizontalAlignment="Left" Margin="71,165,0,0" 
-               VerticalAlignment="Top" Width="40" ToolTip="密码"/>
-        <PasswordBox x:Name="passwordBox" 
+        <Border BorderThickness="1" BorderBrush="#f2c12e" >
+            <Grid>
+                <Button x:Name="buttonClose" Height="20" Width="20" Margin="288,10,10,288" 
+                        Background="Transparent" BorderBrush="Transparent" Click="buttonClose_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Image Source="Picture/Icon/CloseIcon.png"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="buttonMinimize" Height="20" Width="20" Margin="258,10,40,288"
+                        Background="Transparent" BorderBrush="Transparent" Click="buttonMinimize_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Image Source="Picture/Icon/MinimizeIcon.png"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Label x:Name="labelAccount" Content="账号" Height="30" Width="40" 
+                    Margin="71,155,207,133"/>
+                <TextBox x:Name="textBoxAccount" HorizontalAlignment="Left" 
+                     Height="20" Margin="119,158,0,0" TextChanged="TextBoxAccount_TextChanged"
+                     TextWrapping="NoWrap" VerticalAlignment="Top" Width="120" TabIndex="1" ToolTip="请输入账号"/>
+                <Label x:Name="labelPassword" Content="密码" 
+                    HorizontalAlignment="Left" Margin="71,199,0,0" 
+                    VerticalAlignment="Top" Width="40" ToolTip="密码"/>
+                <PasswordBox x:Name="passwordBox" 
                      Height="20"
-                     HorizontalAlignment="Left" Margin="119,169,0,0" 
+                     HorizontalAlignment="Left" Margin="119,203,0,0" 
                      VerticalAlignment="Top" Width="120" TabIndex="2" ToolTip="请输入密码"
                      PasswordChanged="PasswordBox_PasswordChanged"/>
-        <Button x:Name="buttonOk" Content="登录" 
-                HorizontalAlignment="Left" Margin="71,215,0,0" 
-                VerticalAlignment="Top" Width="75"
-                IsEnabled="False"
-                Click="buttonOk_Click" TabIndex="3" ToolTip="登录"/>
-        <Button x:Name="buttonCancel" Content="取消" 
-                HorizontalAlignment="Left" Margin="164,215,0,0" 
-                VerticalAlignment="Top" Width="75"
-                Click="buttonCancel_Click" TabIndex="4" ToolTip="退出"/>
-        <Image x:Name="imageLogo" HorizontalAlignment="Left" 
-               Height="100"
-               VerticalAlignment="Top" Width="100"
-               Source="Picture/logo.png" ToolTip="云弹幕" Margin="105,14,0,0"/>
-        <Label x:Name="labelBarCode"
-               HorizontalAlignment="Left" Margin="121,256,0,0" 
-               VerticalAlignment="Top" Cursor="Hand" ToolTip="请使用微信扫描上面的二维码。" MouseEnter="LabelBarCode_MouseEnter" MouseLeave="LabelBarCode_MouseLeave">
-            <TextBlock TextDecorations="Underline">查看二维码</TextBlock>
-        </Label>
-        <Image x:Name="imageBarCode" 
-               HorizontalAlignment="Left" 
-               Height="252" Margin="31,0,0,0" 
-               VerticalAlignment="Top" Width="252"
-               Visibility="Collapsed"
-               Source="Picture/barcode.jpg" ToolTip="请使用微信功能扫描。"/>
-        <Image x:Name="imageLoading"
-               gif:ImageBehavior.RepeatBehavior="Forever"
-               gif:ImageBehavior.AnimatedSource="Picture/Loading.gif"
-               HorizontalAlignment="Center" VerticalAlignment="Center"
-               Width="150" Height="150" Visibility="Collapsed"/>
+                <Button x:Name="buttonOk" Content="登录" 
+                    HorizontalAlignment="Left" Margin="74,249,0,0" 
+                    VerticalAlignment="Top" Width="75"
+                    IsEnabled="False" Style="{StaticResource functionButton}"
+                    Click="buttonOk_Click" TabIndex="3" ToolTip="点击登录"/>
+                <Button x:Name="buttonCancel" Content="退出" 
+                    HorizontalAlignment="Left" Margin="167,249,0,0" 
+                    VerticalAlignment="Top" Width="75"
+                    Style="{StaticResource functionButton}"
+                    Click="buttonCancel_Click" TabIndex="4"/>
+                <Image x:Name="imageLogo" HorizontalAlignment="Left" 
+                   Height="100"
+                   VerticalAlignment="Top" Width="100"
+                   Source="Picture/logo.png" ToolTip="弹幕派" Margin="105,48,0,0"/>
+                <Label x:Name="labelBarCode"
+                   HorizontalAlignment="Left" Margin="118,282,0,0" 
+                   VerticalAlignment="Top" Cursor="Hand" ToolTip="请使用微信扫描上面的二维码。" 
+                   MouseEnter="LabelBarCode_MouseEnter" MouseLeave="LabelBarCode_MouseLeave">
+                    <TextBlock TextDecorations="Underline">查看二维码</TextBlock>
+                </Label>
+                <Image x:Name="imageBarCode" 
+                   HorizontalAlignment="Left" 
+                   Height="252" Margin="31,0,0,0" 
+                   VerticalAlignment="Top" Width="252"
+                   Visibility="Collapsed"
+                   Source="Picture/barcode.jpg" ToolTip="请使用微信功能扫描。"/>
+                <TextBlock x:Name="textBlockBlank" Background="White" 
+                   Height="190" Width="200" 
+                   Margin="55,128,63,0" Visibility="Collapsed"/>
+                <Image x:Name="imageLoading"
+                   gif:ImageBehavior.RepeatBehavior="Forever"
+                   gif:ImageBehavior.AnimatedSource="Picture/Loading.gif"
+                   Width="100" Height="100" Visibility="Collapsed" Margin="40,119,40,22"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

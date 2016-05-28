@@ -21,6 +21,12 @@
                         Executed="CommandBinding_Executed" />
     </Window.CommandBindings>
     <Grid Name="grid" >
-        <Image x:Name="imageBarcode" Source="Picture/barcode.jpg" Height="200"  Width="200"/>
+        <Image x:Name="imageBarcode" Source="Picture/barcode.jpg" 
+               Height="200"  Width="200"
+               Visibility="Collapsed"/>
+        <TextBlock x:Name="textBlockRoomNum" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Foreground="Black" Background="#f2c12e"
+                   FontSize="36" Visibility="Collapsed" Text="房间号"/>
     </Grid>
 </Window>

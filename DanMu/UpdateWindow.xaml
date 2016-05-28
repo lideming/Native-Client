@@ -5,49 +5,73 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DanmakuPie"
         mc:Ignorable="d"
-        Title="更新" Height="600" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="更新" Height="600" Width="400" 
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        WindowStyle="None">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="4*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Image Grid.Row="0" Source="Picture/BarBKG.jpg" Stretch="Fill" />
-        <Label x:Name="labelVersion" Grid.Row="0"
-               HorizontalAlignment="Center" VerticalAlignment="Center"
-               FontSize="24" Foreground="#f2c12e">
-            已检测到新版本</Label>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="6*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <ProgressBar x:Name="progressBar" Grid.Column="0" 
-                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                     Height="25" Width="300"/>
-            <Label x:Name="labelProgress" Grid.Column="1"
+        <Border BorderThickness="1" BorderBrush="#f2c12e" >
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="0.5*" />
+                </Grid.RowDefinitions>
+                <Image Grid.Row="0" Source="Picture/BarBKG.jpg" Stretch="Fill" MouseMove="Image_MouseMove"/>
+                <Button x:Name="buttonClose" Height="20" Width="20" Margin="358,10,20,55" 
+                        Background="Transparent" BorderBrush="Transparent" Click="buttonClose_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Image Source="Picture/Icon/CloseIcon.png"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="buttonMinimize" Height="20" Width="20" Margin="328,10,50,55"
+                        Background="Transparent" BorderBrush="Transparent" Click="buttonMinimize_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Image Source="Picture/Icon/MinimizeIcon.png"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Label x:Name="labelVersion" Grid.Row="0"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                   FontSize="20">0%</Label>
-        </Grid>
-        <GroupBox x:Name="groupBox" Grid.Row="2" 
-                  Header="更新信息" Margin="10" Height="300" Width="360"
-                  HorizontalAlignment="Left" VerticalAlignment="Top">
-            <TextBlock x:Name="textBlockDisc" Grid.Row="2"
-                       HorizontalAlignment="Left" VerticalAlignment="Top"
-                       FontSize="20"
-                       Background="White" Margin="10 10 10 10">更新信息:</TextBlock>
-        </GroupBox>
-        <Grid Grid.Row="3">
-            <Button x:Name="buttonOk"
-                     Width="80" Height="20" Margin="150,7,120,7"
-                    Click="buttonOk_Click">
-                更新</Button>
-            <Button x:Name="buttonCancel"
-                     Width="80" Height="20" Margin="270,7,20,7"
-                    Click="buttonCancel_Click">
-                退出</Button>
-        </Grid>
-        
+                   FontSize="24" Foreground="#f2c12e">
+                    已检测到新版本</Label>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ProgressBar x:Name="progressBar" Grid.Column="0" 
+                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                         Foreground="#f2c12e" Background="#575555"
+                         Height="25" Width="300"/>
+                    <Label x:Name="labelProgress" Grid.Column="1"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="20">0%</Label>
+                </Grid>
+                <GroupBox x:Name="groupBox" Grid.Row="2" 
+                      Header="更新信息" Margin="10,10,0,0" Height="348" Width="378"
+                      HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <TextBlock x:Name="textBlockDisc" Grid.Row="2"
+                           HorizontalAlignment="Left" VerticalAlignment="Top"
+                           FontSize="14"
+                           Background="White" Margin="10 10 10 10">更新信息:</TextBlock>
+                </GroupBox>
+                <Grid Grid.Row="3">
+                    <Button x:Name="buttonOk"
+                         Width="80" Height="20" Margin="150,7,120,7"
+                        Click="buttonOk_Click"
+                        Style="{StaticResource functionButton}">
+                        更新</Button>
+                    <Button x:Name="buttonCancel"
+                         Width="80" Height="20" Margin="270,7,20,7"
+                        Click="buttonCancel_Click"
+                        Style="{StaticResource functionButton}">
+                        退出</Button>
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
