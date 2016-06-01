@@ -1,6 +1,6 @@
-# 弹幕派 v1.3.0
+# 弹幕派 v1.3.1
 
-![Logo](http://7xr64j.com1.z0.glb.clouddn.com//danmu/logo.png)
+![Logo](http://7xr64j.com1.z0.glb.clouddn.com/danmu/intro/Logo.png)
 
 ## 目录
 * [介绍](#介绍)
@@ -21,9 +21,9 @@
 ### 下载地址
 [GitHub下载](https://github.com/Project-Danmu/Native-Client/releases)
 
-[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmakupie%20v1.3.0.zip)
+[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmakupie%20v1.3.1.zip)
 
-[百度云](http://pan.baidu.com/s/1c17zLgk)
+[百度云](http://pan.baidu.com/s/1c9gvT0)
 
 ## 优点
 
@@ -69,11 +69,15 @@
 目前提供的设置项有字体、颜色、大小、样式（加粗和倾斜）、屏幕上弹幕数量、弹幕获取速度以及弹幕滚动速度。您还可以将字体和颜色设置为随机。需要您注意的是，当您打开`设置`时，您需要重新设置弹幕颜色。
 您的当前设置会保存到程序目录的`setting.ini`文件中，不推荐您改动`setting.ini`文件。如果在启动时程序提示`配置文件错误`，您可以删除`setting.ini`，在下一次启动时程序会自动以默认设置生成一个新的配置文件。
 
-![设置界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/intro/setting.png)
+![设置界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/intro/Setting.png)
 
 ## 版本说明
 
 如果您在使用过程中遇到问题，欢迎反馈到 [thesharing@163.com](mailto:thesharing@163.com?subject=弹幕派意见反馈)。
+
+### v 1.3.1 更新
+
+* 更新界面，修复了一个关于弹幕数量的Bug。
 
 ### v 1.3.0 更新
 
