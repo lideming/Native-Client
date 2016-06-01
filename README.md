@@ -1,6 +1,6 @@
 # 弹幕派 v1.3.1
 
-![Logo](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1,3,1/intro/Logo.png)
+![Logo](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Logo.png)
 
 ## 目录
 * [介绍](#介绍)
@@ -55,7 +55,7 @@
 进入我们的[官方网站](http://danmu.zhengzi.me)进行注册和建立房间，您还可以在官方网站上管理弹幕。在本地客户端使用您注册的账号和密码进行登录以后即可展示弹幕。
 听众们可以通过我们的公众号发送弹幕，您可以将鼠标指针放在`查看二维码`上显示微信公众号的二维码，用微信“扫一扫”功能扫描二维码进入我们的公众号。
 
-![登录界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Login.png)
+![登录界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v.1.3.1/intro/Login.png)
 
 ### 使用
 
