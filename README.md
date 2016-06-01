@@ -1,6 +1,6 @@
 # 弹幕派 v1.3.1
 
-![Logo](http://7xr64j.com1.z0.glb.clouddn.com/danmu/intro/Logo.png)
+![Logo](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1,3,1/intro/Logo.png)
 
 ## 目录
 * [介绍](#介绍)
@@ -55,21 +55,21 @@
 进入我们的[官方网站](http://danmu.zhengzi.me)进行注册和建立房间，您还可以在官方网站上管理弹幕。在本地客户端使用您注册的账号和密码进行登录以后即可展示弹幕。
 听众们可以通过我们的公众号发送弹幕，您可以将鼠标指针放在`查看二维码`上显示微信公众号的二维码，用微信“扫一扫”功能扫描二维码进入我们的公众号。
 
-![登录界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/intro/Login.png)
+![登录界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Login.png)
 
 ### 使用
 
 登录成功后，弹幕派即开始工作。您可以在托盘图标上点击右键选择`暂停`以暂停弹幕的滚动。双击托盘图标即可使其最小化至系统托盘处。点击`显示房间号`会在您的屏幕中央显示您注册的账号所在的房间号，屏幕上显示的弹幕即您当前所在房间里的弹幕，与会者通过在公众号中加入房间即可发送弹幕到屏幕上显示。
 您还可以点击`通过弹幕显示房间号`和`显示公众号二维码`帮助您的听众进入您建立的房间发送弹幕。
 
-![右键菜单](http://7xr64j.com1.z0.glb.clouddn.com/danmu/intro/Menu.png)
+![右键菜单](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Menu.png)
 
 ### 设置
 
 目前提供的设置项有字体、颜色、大小、样式（加粗和倾斜）、屏幕上弹幕数量、弹幕获取速度以及弹幕滚动速度。您还可以将字体和颜色设置为随机。需要您注意的是，当您打开`设置`时，您需要重新设置弹幕颜色。
 您的当前设置会保存到程序目录的`setting.ini`文件中，不推荐您改动`setting.ini`文件。如果在启动时程序提示`配置文件错误`，您可以删除`setting.ini`，在下一次启动时程序会自动以默认设置生成一个新的配置文件。
 
-![设置界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/intro/Setting.png)
+![设置界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Setting.png)
 
 ## 版本说明
 
