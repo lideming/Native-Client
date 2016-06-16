@@ -1,4 +1,4 @@
-# 弹幕派 v1.3.1
+# 弹幕派 v1.4.2
 
 ![Logo](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Logo.png)
 
@@ -21,9 +21,9 @@
 ### 下载地址
 [GitHub下载](https://github.com/Project-Danmu/Native-Client/releases)
 
-[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmakupie%20v1.3.1.zip)
+[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmakupie%20v1.4.2.zip)
 
-[百度云](http://pan.baidu.com/s/1c9gvT0)
+[百度云](http://pan.baidu.com/s/1eRKUcmu)
 
 ## 优点
 
@@ -74,6 +74,12 @@
 ## 版本说明
 
 如果您在使用过程中遇到问题，欢迎反馈到 [thesharing@163.com](mailto:thesharing@163.com?subject=弹幕派意见反馈)。
+
+### v 1.4.2 更新
+
+* 增加了抽奖功能
+* 现在可以用鼠标移动公众号二维码的位置
+* 错误修复
 
 ### v 1.3.1 更新
 
