@@ -20,11 +20,10 @@ namespace DanmakuPie
         {
             base.OnStartup(e);
             UmengAnalyticsNet.Wpf.UmengAnalyticsApp.Initialize("576f96ce67e58eed3d002295", "website");
-            //Debug.WriteLine(UmengAnalyticsNet.OS.GetOSVersion().ToString());
-            //Debug.WriteLine(UmengAnalyticsNet.OS.GetOSString().ToString());
-            //Debug.WriteLine(UmengAnalyticsNet.Token.GetToken().ToString());
+            Debug.WriteLine(UmengAnalyticsNet.OS.GetOSVersion().ToString());
+            Debug.WriteLine(UmengAnalyticsNet.OS.GetOSString().ToString());
+            Debug.WriteLine(UmengAnalyticsNet.Token.GetToken().ToString());
             UmengAnalyticsNet.Wpf.AppInfo info = new UmengAnalyticsNet.Wpf.AppInfo();
-            UmengAnalyticsNet.Wpf.
             Debug.WriteLine(info.GetAppVersion().ToString());
             Debug.WriteLine(info.GetResolution().ToString());
             Debug.WriteLine(info.GetUserId().ToString());
