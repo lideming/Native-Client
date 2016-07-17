@@ -74,7 +74,7 @@
 
 ### 使用效果
 
-![使用效果](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v.1.3.1/intro/Display.jpg)
+![使用效果](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Display.png)
 
 ## 版本说明
 
