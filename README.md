@@ -12,7 +12,6 @@
 	* [登录](#登录)
 	* [使用](#使用)
 	* [设置](#设置)
-	* [使用效果](#使用效果)
 * [版本说明](#版本说明)
 
 ## 介绍
@@ -71,10 +70,6 @@
 您的当前设置会保存到程序目录的`setting.ini`文件中，不推荐您改动`setting.ini`文件。如果在启动时程序提示`配置文件错误`，您可以删除`setting.ini`，在下一次启动时程序会自动以默认设置生成一个新的配置文件。
 
 ![设置界面](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Setting.png)
-
-### 使用效果
-
-![使用效果](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v.1.3.1/intro/Display-1.png)
 
 ## 版本说明
 
