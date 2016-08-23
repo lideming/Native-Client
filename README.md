@@ -1,4 +1,4 @@
-# 弹幕派 v1.4.3
+# 弹幕派 v1.4.9-beta
 
 ![Logo](http://7xr64j.com1.z0.glb.clouddn.com/danmu/v1.3.1/intro/Logo.png)
 
@@ -21,9 +21,9 @@
 ### 下载地址
 [GitHub下载](https://github.com/Project-Danmu/Native-Client/releases)
 
-[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/v.1.4.3/Danmakupie%20v1.4.3.zip)
+[七牛云存储](http://7xr64j.com1.z0.glb.clouddn.com/danmu/release/Danmakupie%20v1.4.9.0.zip)
 
-[百度云](http://pan.baidu.com/s/1jICpB0M)
+[百度云](https://pan.baidu.com/s/1hrJ7MAw)
 
 ## 优点
 
@@ -43,6 +43,8 @@
 * 将设置存储至本地
 * 显示房间号
 * 登录功能
+* 自动更新
+* 日志功能
 
 ## 使用说明
 
@@ -74,6 +76,14 @@
 ## 版本说明
 
 如果您在使用过程中遇到问题，欢迎反馈到 [thesharing@163.com](mailto:thesharing@163.com?subject=弹幕派意见反馈)。
+
+### v 1.4.9-beta
+
+* 重写了动画部分，降低了部分CPU占用，同时弹幕效果更贴近在线视频网站的效果
+* 自动更新功能
+* 设置文件由原先的ini改为了xml，您需要进行重新设置（之后版本将一直使用xml文件）
+* 日志功能
+* 修复了一些Bug
 
 ### v 1.4.3 更新
 
@@ -124,8 +134,6 @@
 
 ### 未完成部分
 
-* 自动更新
-* 日志
 * 对话框
 * 不文明语言过滤功能
 * 调整弹幕位置
