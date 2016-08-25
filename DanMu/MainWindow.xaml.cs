@@ -40,7 +40,7 @@ namespace DanmakuPie
         int time = setting.getDURATION() - 1; // 时间片，用于计算弹幕获取间隔，起始时间设置为间隔-1，方便一运行就出弹幕
 
         private System.Timers.Timer mainTimer = null;   // 主计时器
-        private Timer getWebContentTimer = null;  
+        private Timer getWebContentTimer = null;
 
         private BackgroundWorker fetchBW = new BackgroundWorker(); // 后台获取网络数据的后台进程
 
@@ -176,17 +176,10 @@ namespace DanmakuPie
                 var text = danmuStorage[0];
                 danmuStorage.RemoveAt(0);
 
-                var fontFamily = setting.getRandomFontFamily() ?
-                    randomFontFramily() : setting.getFontFamily().ToString();
-                var font = new System.Drawing.Font(fontFamily, (float)setting.getFontSize());
-
-                var color = setting.getRandomColor() ?
-                    randomColor() : (setting.getForeground() as SolidColorBrush).Color;
-
                 var danmaku = new Danmaku() {
                     Text = text,
-                    Color = convertColor(color),
-                    Font = font
+                    Color = convertColor(getColor()),
+                    Font = getFont()
                 };
                 danmakuEngine.ShowDanmaku(danmaku);
             }
@@ -196,6 +189,17 @@ namespace DanmakuPie
                     fetchBW.RunWorkerAsync();
                 }
             }
+        }
+
+        private Color getColor() {
+            return setting.getRandomColor() ?
+                randomColor() : (setting.getForeground() as SolidColorBrush).Color;
+        }
+
+        private System.Drawing.Font getFont() {
+            var fontFamily = setting.getRandomFontFamily() ?
+                randomFontFramily() : setting.getFontFamily().ToString();
+            return new System.Drawing.Font(fontFamily, (float)setting.getFontSize());
         }
 
         System.Drawing.Color convertColor(Color color) {
@@ -532,13 +536,28 @@ namespace DanmakuPie
             danmuStorage.Add("房间号" + setting.getRoomId());
         }
 
+        Danmaku roomNumDanmaku;
         private void displayRoomNumViaDanmu_Click(object sender, EventArgs e) {
-            // TODO
             if (childrenOfMenuDisplay[0].Checked) {
                 childrenOfMenuDisplay[0].Checked = false;
+                roomNumDanmaku?.Remove();
             }
             else {
                 childrenOfMenuDisplay[0].Checked = true;
+                if (roomNumDanmaku == null) {
+                    roomNumDanmaku = new Danmaku() {
+                        Text = "房间号: " + setting.getRoomId(),
+                        Font = getFont(),
+                        Color = convertColor(getColor())
+                    };
+                    roomNumDanmaku.DanmakuPassed += (d) => {
+                        danmakuEngine.ShowDanmaku(d);
+                    };
+                }
+                else {
+                    roomNumDanmaku.Remove();
+                }
+                danmakuEngine.ShowDanmaku(roomNumDanmaku);
             }
         }
 

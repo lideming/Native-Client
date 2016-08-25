@@ -69,11 +69,6 @@ namespace DanmakuPie
         /// <summary>
         /// 显示一条弹幕
         /// </summary>
-        /// <param name="text">显示的文字</param>
-        /// <param name="color">文字的颜色</param>
-        /// <param name="font">文字的字体</param>
-        /// <param name="startHeight">起始高度</param>
-        /// <param name="autoMoveDown">是否检测重叠并自动下移</param>
         public void ShowDanmaku(Danmaku danmaku) {
             if (disposed)
                 return;

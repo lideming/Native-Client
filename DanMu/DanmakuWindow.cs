@@ -24,6 +24,7 @@ namespace DanmakuPie
             danmaku.Window = this;
             danmaku.Passing = true;
 
+            this.Opacity = setting.getOpactity();
             FormBorderStyle = FormBorderStyle.None;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;
