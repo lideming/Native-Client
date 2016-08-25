@@ -31,11 +31,10 @@ namespace DanmakuPie
         private string passwordText;
 
         public LoginWindow() {
-            if (RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
+            if (Registry.LocalMachine.
                 OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4.0\") == null) {
                 this.Close();
             }
-
             InitializeComponent();
 
             loginBW.WorkerReportsProgress = true;
@@ -86,7 +85,7 @@ namespace DanmakuPie
             imageBarCode.Visibility = Visibility.Collapsed;
         }
 
-        private void buttonOk_Click(object sender, RoutedEventArgs e) { 
+        private void buttonOk_Click(object sender, RoutedEventArgs e) {
             this.buttonOk.IsEnabled = false;
             this.buttonOk.Content = "登录中";
             textBlockBlank.Visibility = Visibility.Visible;
@@ -216,13 +215,11 @@ namespace DanmakuPie
 
         public void CheckUpdate() {
             Debug.WriteLine("Start.");
-            System.Threading.ThreadPool.QueueUserWorkItem((s) =>
-            {
+            System.Threading.ThreadPool.QueueUserWorkItem((s) => {
                 Debug.WriteLine("Checking Update.");
                 string url = "http://7xr64j.com1.z0.glb.clouddn.com/update2.xml";
                 var client = new System.Net.WebClient();
-                client.DownloadDataCompleted += (x, y) =>
-                {
+                client.DownloadDataCompleted += (x, y) => {
                     Debug.WriteLine("Download Completed.");
                     if (y.Error == null) {
                         MemoryStream memoryStream = new MemoryStream(y.Result);
@@ -245,7 +242,7 @@ namespace DanmakuPie
         }
 
         public void CheckUpdateInfo(UpdateInfo updateInfo) {
-            if(updateInfo.UpdateMode == "UpdateToMin")
+            if (updateInfo.UpdateMode == "UpdateToMin")
                 if (updateInfo.RequiredMinVersion != null && System.Reflection.Assembly.GetExecutingAssembly().GetName().Version >= updateInfo.RequiredMinVersion)
                     return;
             if (updateInfo.UpdateMode == "UpdateToNew")
@@ -258,7 +255,7 @@ namespace DanmakuPie
                     this.Close();
                 }));
             }));
-            t.Start();    
+            t.Start();
         }
 
         private void buttonClose_Click(object sender, RoutedEventArgs e) {
