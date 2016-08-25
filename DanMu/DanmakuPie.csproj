@@ -124,6 +124,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="DanmakuEngine.cs" />
+    <Compile Include="ImageWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MessageDialog.xaml.cs">
       <DependentUpon>MessageDialog.xaml</DependentUpon>
     </Compile>

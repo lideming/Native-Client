@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:DanmakuPie"
         mc:Ignorable="d"
         Title="弹幕派" Height="0" Width="0"
+        ShowInTaskbar="False"
         WindowStyle="None" Background="#00FFFFFF" AllowsTransparency="True"
         Topmost="True" WindowState="Minimized" WindowStartupLocation="Manual"
         Closing="Window_Closing" Loaded="Window_Loaded">

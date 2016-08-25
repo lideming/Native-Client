@@ -560,14 +560,23 @@ namespace DanmakuPie
                 danmakuEngine.ShowDanmaku(roomNumDanmaku);
             }
         }
-
+        ImageWindow QRCodeWindow;
         private void displayBarcode_Click(object sender, EventArgs e) {
             // TODO
             if (childrenOfMenuDisplay[1].Checked) {
                 childrenOfMenuDisplay[1].Checked = false;
+                QRCodeWindow?.Close();
+                QRCodeWindow = null;
             }
             else {
                 childrenOfMenuDisplay[1].Checked = true;
+                if (QRCodeWindow == null) {
+                    var image = Properties.Resources.barcode;
+                    QRCodeWindow = new ImageWindow(image);
+                    QRCodeWindow.TopMost = true;
+                }
+                QRCodeWindow.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+                QRCodeWindow.Show();
             }
         }
 
