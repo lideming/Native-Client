@@ -14,8 +14,8 @@ namespace DanmakuPie
     {
         List<DanmakuWindow> danmakuWindowList = new List<DanmakuWindow>();
         public IList<DanmakuWindow> DanmakuWindowList => danmakuWindowList;
-        public bool Stop { get; set; }
         public int DanmakuCount => danmakuWindowList.Count;
+        object danmakuWindowListLock = new object();
 
         bool hidden = false;
         /// <summary>
@@ -45,7 +45,7 @@ namespace DanmakuPie
                 }
             }
         }
-
+        private volatile bool switchingScreen = false;
         private Rectangle currentBounds;
         public Rectangle CurrentBounds => currentBounds;
         private Screen currentScreen;
@@ -56,8 +56,28 @@ namespace DanmakuPie
             }
 
             set {
-                this.currentScreen = value;
-                this.currentBounds = value.Bounds;
+                if (value == currentScreen)
+                    return;
+                switchingScreen = true;
+                try {
+                    lock (danmakuWindowListLock) {
+                        var newscreen = value;
+                        var changedLocation = new Size(
+                            newscreen.Bounds.X - currentBounds.X,
+                            newscreen.Bounds.Y - currentBounds.Y
+                            );
+                        foreach (var dw in danmakuWindowList) {
+                            dw.Invoke(new MethodInvoker(() => {
+                                dw.Location += changedLocation;
+                            }));
+                        }
+                        this.currentScreen = value;
+                        this.currentBounds = value.Bounds;
+                    }
+                }
+                finally {
+                    switchingScreen = false;
+                }
             }
         }
 
@@ -73,12 +93,15 @@ namespace DanmakuPie
             if (disposed)
                 return;
             new Thread(() => {
-                var dw = new DanmakuWindow(this, danmaku);
-                if (danmaku.AutoMoveDown)
-                    checkIntersectAndMoveDown(dw);
-                if (hidden)
-                    dw.Hide();
-                danmakuWindowList.Add(dw);
+                DanmakuWindow dw = null;
+                lock (danmakuWindowListLock) {
+                    dw = new DanmakuWindow(this, danmaku);
+                    if (danmaku.AutoMoveDown)
+                        checkIntersectAndMoveDown(dw);
+                    if (hidden)
+                        dw.Hide();
+                    danmakuWindowList.Add(dw);
+                }
                 Application.Run(dw);
             }) { IsBackground = true }.Start();
         }
@@ -115,10 +138,9 @@ namespace DanmakuPie
                             if (d.IsShown) {
                                 d.BeginInvoke(new MethodInvoker(() => {
                                     d.Left -= /* TODO */ setting.getSPEED();
-                                    if (d.Bounds.Right < currentBounds.Left) {
+                                    if (d.Bounds.Right < currentBounds.Left && switchingScreen == false) {
                                         d.Remove();
                                         d.danmaku.InvokeDanmakuPassed();
-                                        d.Close();
                                     }
                                 }));
                             }

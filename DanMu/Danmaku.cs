@@ -11,11 +11,16 @@ namespace DanmakuPie
         public string Text;
         public Color Color;
         public Font Font;
-        public int Height = 0;
+        /// <summary>
+        /// 相对屏幕顶部的高度
+        /// </summary>
+        public int StartHeight = 0;
         public bool AutoMoveDown = true;
 
-        public bool Passing = false;
-
+        public bool IsPassing = false;
+        /// <summary>
+        /// 弹幕经过屏幕后触发
+        /// </summary>
         public event Action<Danmaku> DanmakuPassed;
         public void InvokeDanmakuPassed() => DanmakuPassed?.Invoke(this);
 

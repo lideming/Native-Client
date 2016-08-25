@@ -22,13 +22,13 @@ namespace DanmakuPie
             this.engine = engine;
             this.danmaku = danmaku;
             danmaku.Window = this;
-            danmaku.Passing = true;
+            danmaku.IsPassing = true;
 
             this.Opacity = setting.getOpactity();
             FormBorderStyle = FormBorderStyle.None;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.Manual;
-            Location = new Point(engine.CurrentBounds.Right, engine.CurrentBounds.Top + danmaku.Height);
+            Location = new Point(engine.CurrentBounds.Right, engine.CurrentBounds.Top + danmaku.StartHeight);
 
             update();
             this.Shown += Danmaku_Shown;
@@ -44,7 +44,7 @@ namespace DanmakuPie
 
         public void Remove() {
             try {
-                danmaku.Passing = false;
+                danmaku.IsPassing = false;
                 danmaku.Window = null;
                 engine.DanmakuWindowList.Remove(this);
                 if (IsDisposed == false) {

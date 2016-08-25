@@ -482,12 +482,12 @@ namespace DanmakuPie
                 System.Windows.Forms.MenuItem selectMenuItem = (System.Windows.Forms.MenuItem)sender;
                 int screenID = int.Parse(selectMenuItem.Text.Substring(4));
                 if (sc.Length > screenID && sc[screenID] != null) {
-                    // TODO
                     childrenOfScreen[nowScreen].Checked = false;
                     childrenOfScreen[nowScreen].Enabled = true;
                     nowScreen = screenID;
                     childrenOfScreen[screenID].Checked = true;
                     childrenOfScreen[screenID].Enabled = false;
+                    danmakuEngine.CurrentScreen = sc[screenID];
                 }
             }
             catch {
@@ -560,6 +560,7 @@ namespace DanmakuPie
                 danmakuEngine.ShowDanmaku(roomNumDanmaku);
             }
         }
+
         ImageWindow QRCodeWindow;
         private void displayBarcode_Click(object sender, EventArgs e) {
             // TODO
@@ -575,6 +576,7 @@ namespace DanmakuPie
                     QRCodeWindow = new ImageWindow(image);
                     QRCodeWindow.TopMost = true;
                 }
+                QRCodeWindow.Location = danmakuEngine.CurrentScreen.Bounds.Location;
                 QRCodeWindow.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
                 QRCodeWindow.Show();
             }
