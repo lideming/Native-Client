@@ -7,30 +7,20 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
+#pragma warning disable CS1690 // 访问引用封送类的字段上的成员可能导致运行时异常
 namespace DanmakuPie
 {
-    interface IDanmakuEngine : IDisposable, IEnumerable<IDanmaku>
+    class DanmakuEngine
     {
-        void ShowDanmaku(string text, Color color, Font font);
-        bool Hidden { get; set; }
-        int DanmakuCount { get; }
-    }
-
-    interface IDanmaku
-    {
-        string Text { get; }
-        Color Color { get; set; }
-        void Close();
-    }
-
-    class DanmakuEngine : IDanmakuEngine
-    {
-        List<Danmaku> danmakuList = new List<Danmaku>();
-        public IList<Danmaku> DanmakuList => danmakuList;
+        List<DanmakuWindow> danmakuWindowList = new List<DanmakuWindow>();
+        public IList<DanmakuWindow> DanmakuWindowList => danmakuWindowList;
         public bool Stop { get; set; }
-        public int DanmakuCount => danmakuList.Count;
+        public int DanmakuCount => danmakuWindowList.Count;
 
         bool hidden = false;
+        /// <summary>
+        /// 获取或设置一个值，指示是否隐藏所有弹幕
+        /// </summary>
         public bool Hidden
         {
             get {
@@ -41,9 +31,9 @@ namespace DanmakuPie
                 if (hidden == value)
                     return;
                 hidden = value;
-                for (int i = 0; i < danmakuList.Count; i++) {
+                for (int i = 0; i < danmakuWindowList.Count; i++) {
                     try {
-                        var d = danmakuList[i];
+                        var d = danmakuWindowList[i];
                         if (hidden) {
                             d.BeginInvoke(new MethodInvoker(() => d.Hide()));
                         }
@@ -55,48 +45,64 @@ namespace DanmakuPie
                 }
             }
         }
-        
-        public DanmakuEngine() {
-            startEngineThread();
+
+        private Rectangle currentBounds;
+        public Rectangle CurrentBounds => currentBounds;
+        private Screen currentScreen;
+        public Screen CurrentScreen
+        {
+            get {
+                return currentScreen;
+            }
+
+            set {
+                this.currentScreen = value;
+                this.currentBounds = value.Bounds;
+            }
         }
 
-        public void ShowDanmaku(string text, Color color, Font font) {
+        public DanmakuEngine() {
+            startEngineThread();
+            CurrentScreen = Screen.PrimaryScreen;
+        }
+
+        /// <summary>
+        /// 显示一条弹幕
+        /// </summary>
+        /// <param name="text">显示的文字</param>
+        /// <param name="color">文字的颜色</param>
+        /// <param name="font">文字的字体</param>
+        /// <param name="startHeight">起始高度</param>
+        /// <param name="autoMoveDown">是否检测重叠并自动下移</param>
+        public void ShowDanmaku(Danmaku danmaku) {
             if (disposed)
                 return;
             new Thread(() => {
-                var d = new Danmaku(this, text, color, font);
-                setDanmakuStartPosition(d);
-                d.FormClosed += (s, e) => {
-                    try {
-                        danmakuList.Remove(d);
-                    }
-                    catch (Exception) { } // ignore
-                };
+                var dw = new DanmakuWindow(this, danmaku);
+                if (danmaku.AutoMoveDown)
+                    checkIntersectAndMoveDown(dw);
                 if (hidden)
-                    d.Hide();
-                danmakuList.Add(d);
-                Application.Run(d);
+                    dw.Hide();
+                danmakuWindowList.Add(dw);
+                Application.Run(dw);
             }) { IsBackground = true }.Start();
         }
 
-#pragma warning disable CS1690 // 访问引用封送类的字段上的成员可能导致运行时异常
-
-        void setDanmakuStartPosition(Danmaku d) {
-            d.Location = new Point(d.screenBounds.Right, d.screenBounds.Top);
-            lock (danmakuList) {
+        void checkIntersectAndMoveDown(DanmakuWindow d) {
+            lock (danmakuWindowList) {
                 while (true) {
-                    bool hasIntersct = false;
-                    for (int i = 0; i < danmakuList.Count; i++) {
-                        var d2 = danmakuList[i];
+                    bool hasIntersect = false;
+                    for (int i = 0; i < danmakuWindowList.Count; i++) {
+                        var d2 = danmakuWindowList[i];
                         var bounds = d2.Bounds;
                         bounds.Width += 20;
                         if (bounds.IntersectsWith(d.Bounds)) {
-                            hasIntersct = true;
+                            hasIntersect = true;
                             d.Top = d2.Bounds.Bottom;
                             break;
                         }
                     }
-                    if (!hasIntersct)
+                    if (!hasIntersect)
                         break;
                 }
             }
@@ -106,15 +112,17 @@ namespace DanmakuPie
             new Thread(() => {
                 while (true) {
                     Thread.Sleep(16);
-                    if (danmakuList.Count < 0)
+                    if (danmakuWindowList.Count < 0)
                         continue;
                     try {
-                        for (int i = danmakuList.Count - 1; i >= 0; i--) {
-                            var d = danmakuList[i];
+                        for (int i = danmakuWindowList.Count - 1; i >= 0; i--) {
+                            var d = danmakuWindowList[i];
                             if (d.IsShown) {
                                 d.BeginInvoke(new MethodInvoker(() => {
                                     d.Left -= /* TODO */ setting.getSPEED();
-                                    if (d.Bounds.Right < d.screenBounds.Left) {
+                                    if (d.Bounds.Right < currentBounds.Left) {
+                                        d.Remove();
+                                        d.danmaku.InvokeDanmakuPassed();
                                         d.Close();
                                     }
                                 }));
@@ -131,21 +139,13 @@ namespace DanmakuPie
             if (disposed)
                 return;
             disposed = true;
-            for (int i = danmakuList.Count - 1; i >= 0; i--) {
+            for (int i = danmakuWindowList.Count - 1; i >= 0; i--) {
                 try {
-                    danmakuList[i].Close();
+                    danmakuWindowList[i].Close();
                 }
                 catch (Exception) { } // ignore
             }
         }
-#pragma warning restore CS1690
-
-        public IEnumerator<IDanmaku> GetEnumerator() {
-            return danmakuList.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return danmakuList.GetEnumerator();
-        }
     }
 }
+#pragma warning restore CS1690

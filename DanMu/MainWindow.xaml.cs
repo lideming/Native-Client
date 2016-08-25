@@ -26,7 +26,7 @@ namespace DanmakuPie
         private static List<string> danmuStorage = new List<string>(); // 存储从网络获取的弹幕信息
                                                                        //为了保证获取速度，先后台获取多条弹幕，然后缓存起来
 
-        private IDanmakuEngine danmakuEngine = new DanmakuEngine();
+        private DanmakuEngine danmakuEngine = new DanmakuEngine();
 
         Boolean hasDisplayedBalloonTip = false; // 是否已经显示过气泡提示
                                                 // 气泡提示用于第一次最小化时提示用户软件被最小化至系统托盘
@@ -183,7 +183,12 @@ namespace DanmakuPie
                 var color = setting.getRandomColor() ?
                     randomColor() : (setting.getForeground() as SolidColorBrush).Color;
 
-                danmakuEngine.ShowDanmaku(text, convertColor(color), font);
+                var danmaku = new Danmaku() {
+                    Text = text,
+                    Color = convertColor(color),
+                    Font = font
+                };
+                danmakuEngine.ShowDanmaku(danmaku);
             }
             if (danmuStorage.Count < NUM) {
                 if (fetchBW.IsBusy == false) {
@@ -529,15 +534,20 @@ namespace DanmakuPie
 
         private void displayRoomNumViaDanmu_Click(object sender, EventArgs e) {
             // TODO
+            if (childrenOfMenuDisplay[0].Checked) {
+                childrenOfMenuDisplay[0].Checked = false;
+            }
+            else {
+                childrenOfMenuDisplay[0].Checked = true;
+            }
         }
 
         private void displayBarcode_Click(object sender, EventArgs e) {
+            // TODO
             if (childrenOfMenuDisplay[1].Checked) {
-                imageBarcode.Visibility = Visibility.Hidden;
                 childrenOfMenuDisplay[1].Checked = false;
             }
             else {
-                imageBarcode.Visibility = Visibility.Visible;
                 childrenOfMenuDisplay[1].Checked = true;
             }
         }
